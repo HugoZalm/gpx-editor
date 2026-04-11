@@ -1,0 +1,7 @@
+<button matButton (click)="emitAction()" [matTooltip]="tooltip()" class="full-width">
+  <div class="align">
+    <app-icon-button [icon]="icon()"></app-icon-button>
+    <span>{{ label() }}</span>
+    <span class="right">{{ shortKey() }}</span>
+  </div>
+</button>

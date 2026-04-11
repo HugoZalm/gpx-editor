@@ -1,0 +1,18 @@
+<div class="container">
+    <div class="menu">
+        <span>GPX editor</span>
+        <span>Bestand</span>
+        <span>Bewerken</span>
+        <span>Weergave</span>
+        <span>Instellingen</span>
+        <span>Help</span>
+        <button matButton [matMenuTriggerFor]="menu">Menu</button>
+    </div>
+</div>
+
+<mat-menu #menu="matMenu">
+    <div class="sub-menu">
+        <app-menu-button [label]="'Nieuw'" [icon]="'pencil'" [action]="'nieuw'" [shortKey]="'Ctrl + N'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Open'" [icon]="'folder-open'" [action]="'open'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+    </div>
+</mat-menu>

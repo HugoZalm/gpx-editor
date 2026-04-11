@@ -1,0 +1,24 @@
+.container {
+    position: absolute;
+    top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 20px;
+
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.sub-menu {
+    display: flex;
+    flex-direction: column;
+}

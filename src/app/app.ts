@@ -8,5 +8,22 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('frontend');
+  // private translate = inject(TranslateService);
+  // private authService = inject(AuthService);
+
+  constructor() {
+    // this.translate.addLangs(['en', 'nl']);
+    // this.translate.setFallbackLang('nl');
+    // this.translate.use('nl');
+  }
+
+  async ngOnInit() {}
+
+  async login() {
+    // await this.authService.login();
+  }
+
+  async logout() {
+    // await this.authService.logout();
+  }
 }

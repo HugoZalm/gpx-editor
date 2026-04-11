@@ -1,0 +1,9 @@
+.root-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  main {
+    flex-grow: 1;
+  }
+}
