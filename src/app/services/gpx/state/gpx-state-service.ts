@@ -1,19 +1,19 @@
 import { ParsedGPX } from '@we-gold/gpxjs';
 import { Injectable, signal } from '@angular/core';
-import { GeoJSON, Track } from '@we-gold/gpxjs';
 
 export interface Project {
-  id?: number;
-  name: string;
-  files: Map<string, GpxInfo>;
+  metadata: FileMetaData;
+  files: Map<string, FileInfo>;
 }
 
-export interface GpxInfo {
+export interface FileInfo {
+  metadata: FileMetaData;
   file: ParsedGPX;
-  config: GpxConfig;
 }
 
-export interface GpxConfig {
+export interface FileMetaData {
+  id: string;
+  name: string;
   color: string;
 }
 
@@ -23,22 +23,24 @@ export interface GpxConfig {
 export class GpxStateService {
 
   NAMES = ['apple', 'banana', 'car', 'house', 'tree'];
+  COLORS = ['black', 'red', 'green', 'blue', 'yellow', 'orange', 'grey'];
 
-  public projectName = signal<string>('test');
-  public projectFiles = signal<Map<string, GpxInfo>>(new Map());
+  public projectMetaData = signal<FileMetaData>({ id: crypto.randomUUID(), name: 'undefined', color: ''});
+  public projectFiles = signal<Map<string, FileInfo>>(new Map());
   public currentFile = signal<string | undefined>(undefined);
 
+  /* PROJECT LEVEL */
   getProject(): Project {
     return {
-      name: this.projectName(),
+      metadata: this.projectMetaData(),
       files: this.projectFiles()
     };
   }
 
   getProjectAsString(): string {
     const data = {
-      name: this.projectName(),
-      files: JSON.stringify(Array.from(this.projectFiles().entries()))
+      metadata: JSON.stringify(this.projectMetaData(), null, 2),
+      files: JSON.stringify(Array.from(this.projectFiles().entries()), null, 2)
     };
     return JSON.stringify(data, null, 2);
   }
@@ -46,18 +48,25 @@ export class GpxStateService {
   setProject(json: string) {
     const data = JSON.parse(json);
     const map = new Map<string, any>(JSON.parse(data.files));
-    this.projectName.set(data.name);
+    this.projectMetaData.set(JSON.parse(JSON.parse(data.metadata)));
     this.projectFiles.set(map);
   }
 
-  storeTrack(file: ParsedGPX): string | undefined {
+  updateProjectName(name: string) {
+    this.projectMetaData.set({...this.projectMetaData(), name });
+  }
+
+
+  /* FILE LEVEL */
+  addFile(file: ParsedGPX): string | undefined {
     if (file !== null) {
       const name = file.metadata.name ?? this.getRandomName();
+      const id = crypto.randomUUID();
+      const color = this.getRandomColor();
       this.projectFiles.update((f) => {
         const newMap = new Map(f);
-          // newMap.set(name, file);
-          const config: GpxConfig = { color: 'red' };
-          newMap.set(name, { file, config });
+          const metadata: FileMetaData = { id, name, color };
+          newMap.set(id, { file, metadata });
           return newMap;
       });
       return name;
@@ -66,11 +75,11 @@ export class GpxStateService {
     }
   }
 
-  removeTrack(name: string): void {
-    if (this.projectFiles().has(name)) {
+  removeFile(id: string): void {
+    if (this.projectFiles().has(id)) {
       this.projectFiles.update((f) => {
         const newMap = new Map(f);
-          newMap.delete(name);
+          newMap.delete(id);
           return newMap;
       });
     } else {
@@ -78,15 +87,39 @@ export class GpxStateService {
     }
   }
 
-  setCurrentFile(name: string){
-    if (this.projectFiles().has(name)) {
-      this.currentFile.update((c) => c = name);
+  updateFile(metadata: FileMetaData) {
+    const fileName = this.currentFile();
+    if (!fileName) { 
+      console.log('no file selected');
+      return;
+    }
+    this.projectFiles.update((f) => {
+      const newMap = new Map(f);
+      const existing = newMap.get(fileName);
+      if (!existing) {
+        console.log('requested file does not exist');
+        return f;
+      }
+      newMap.set(fileName, {
+        ...existing,
+        metadata: {
+          ...existing.metadata,
+          color: 'blue'
+        }
+      });
+      return newMap;
+    });
+  }
+
+  setCurrentFile(id: string){
+    if (this.projectFiles().has(id)) {
+      this.currentFile.update((c) => c = id);
     } else {
       console.log('file does not exist');
     }
   }
 
-  getCurrentFile(): GpxInfo | undefined {
+  getCurrentFile(): FileInfo | undefined {
     if ((this.currentFile() !== undefined) && (this.projectFiles().has(this.currentFile() as string))) {
       return this.projectFiles().get(this.currentFile() as string);
     } else {
@@ -94,7 +127,7 @@ export class GpxStateService {
     }
   }
 
-  getFile(name: string): GpxInfo | undefined {
+  getFile(id: string): FileInfo | undefined {
     if ((this.currentFile() !== undefined) && (this.projectFiles().has(this.currentFile() as string))) {
       return this.projectFiles().get(this.currentFile() as string);
     } else {
@@ -106,8 +139,17 @@ export class GpxStateService {
     return (this.currentFile !== undefined) && (this.projectFiles().has(this.currentFile() as string));
   }
 
+  isCurrentFile(file: string): boolean {
+    return this.currentFile() === file;
+  }
+
+  /* UTILS */
   getRandomName(): string {
     return this.NAMES[Math.floor(Math.random() * this.NAMES.length)];
+  }
+
+  getRandomColor(): string {
+    return this.COLORS[Math.floor(Math.random() * this.COLORS.length)];
   }
 
 }

@@ -6,12 +6,34 @@
 
 .file-list-item {
     background-color: lightgray;
-    border-right: 5px solid red;
     margin-bottom: 5px;
+    padding: 10px 15px;
+    border-radius: 5px;
+
+    div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
 }
 
 .track-list-item {
     background-color: lightgray;
-    border-right: 5px solid blue;
-    margin: 0px 10px 5px 10px;
+    margin: 0px 0px 5px 20px;
+    padding: 5px 15px;
+    border-radius: 5px;
+
+    div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.color {
+  border-left: 8px solid var(--color);
+}
+
+.selected {
+    background-color: aqua;
 }

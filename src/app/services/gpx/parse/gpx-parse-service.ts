@@ -16,7 +16,7 @@ export class GpxParseService {
       return undefined;
     } else {
       // const file: GeoJSON = parsedFile.toGeoJSON()
-      return this.gpxState.storeTrack(parsedFile);
+      return this.gpxState.addFile(parsedFile);
     }
   }
 

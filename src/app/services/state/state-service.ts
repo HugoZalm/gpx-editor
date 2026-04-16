@@ -15,7 +15,7 @@ export enum PanelTypes {
 })
 export class StateService {
 
-  panels = signal<Panels>({ right: false, bottom: false});
+  panels = signal<Panels>({ right: true, bottom: false});
 
   togglePanel(type: PanelTypes) {
     switch(type) {
