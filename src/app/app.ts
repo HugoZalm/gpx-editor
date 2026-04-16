@@ -1,5 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +9,13 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App {
-  // private translate = inject(TranslateService);
+  private translate = inject(TranslateService);
   // private authService = inject(AuthService);
 
   constructor() {
-    // this.translate.addLangs(['en', 'nl']);
-    // this.translate.setFallbackLang('nl');
-    // this.translate.use('nl');
+    this.translate.addLangs(['en', 'nl']);
+    this.translate.setFallbackLang('nl');
+    this.translate.use('nl');
   }
 
   async ngOnInit() {}

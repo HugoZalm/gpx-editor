@@ -1,0 +1,100 @@
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input />
+</mat-form-field>
+
+<button mat-mini-fab color="primary" aria-label="add item" (click)="addItem()" class="addButton">
+  <mat-icon>add</mat-icon>
+</button>
+
+<table
+  mat-table
+  [dataSource]="_dataSource"
+  matSort
+  class="mat-elevation-z8"
+  >
+  <!-- <ng-container matColumnDef="select">
+    <th mat-header-cell *matHeaderCellDef>
+      <mat-checkbox
+        (change)="$event ? toggleAllRows() : null"
+        [checked]="selection.hasValue() && isAllSelected()"
+        [indeterminate]="selection.hasValue() && !isAllSelected()"
+        >
+      </mat-checkbox>
+    </th>
+    <td mat-cell *matCellDef="let row">
+      <mat-checkbox
+        (click)="$event.stopPropagation()"
+        (change)="$event ? selection.toggle(row) : null"
+        [checked]="selection.isSelected(row)"
+        >
+      </mat-checkbox>
+    </td>
+  </ng-container> -->
+
+  @for (column of infoColumns; track column) {
+    <ng-container [matColumnDef]="column.id">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header
+        >
+        @if (isType(column, ColumnType.DELETED)) {
+          <app-columnheadertype-icon [icon]="'delete'"></app-columnheadertype-icon>
+        } @else if (isType(column, ColumnType.READY)) {
+          <app-columnheadertype-icon [icon]="'check'"></app-columnheadertype-icon>
+        } @else if (isType(column, ColumnType.VERZONDEN)) { Verzonden
+        } @else {
+          {{ column.label | translate }}
+        }
+        @if (column.sort === 'asc') {
+          <mat-icon matListItemIcon>arrow_downward</mat-icon>
+        }
+        @if (column.sort === 'desc') {
+          <mat-icon matListItemIcon>arrow_upward</mat-icon>
+        }
+      </th>
+      <td mat-cell *matCellDef="let element">
+        <!-- @if (isBoolean(element[column.element])) { -->
+        @if (isType(column, ColumnType.DELETED)) {
+          <app-columntype-boolean
+            [value]="element[column.element]"
+            [icon]="'delete'"
+          ></app-columntype-boolean>
+        } @else if (isType(column, ColumnType.READY)) {
+          <app-columntype-boolean
+            [value]="element[column.element]"
+            [icon]="'check'"
+          ></app-columntype-boolean>
+        } @else if(isType(column, ColumnType.LAND)) {
+          <app-columntype-land
+            [value]="element[column.element]"
+          ></app-columntype-land>
+        } @else if(isType(column, ColumnType.VERZONDEN)) {
+          <app-columntype-verzonden
+            [value]="element[column.element]"
+            [icon]="'check'"
+          ></app-columntype-verzonden>
+        } @else {
+          {{ element[column.element] }}
+        }
+      </td>
+    </ng-container>
+  }
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: displayedColumns"
+    (click)="getRecord(row)"
+  ></tr>
+</table>
+
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 15, 20, 25]"
+  [pageSize]="10"
+  [length]="_dataSource"
+  showFirstLastButtons
+  >
+</mat-paginator>
+

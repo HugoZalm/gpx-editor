@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { LucideFolderOpen, LucideMapPin, LucidePencil, LucidePlus, LucideScissors } from '@lucide/angular';
+import { LucideBike, LucideChartArea, LucideFile, LucideFileDown, LucideFilePlus, LucideFileUp, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePencil, LucidePlus, LucideScissors } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -35,10 +35,32 @@ export class IconButtonComponent {
         return LucideFolderOpen;
       case 'add':
         return LucidePlus;
+      case 'folder':
+        return LucideFolder;
+      case 'folder-plus':
+        return LucideFolderPlus;
+      case 'folder-up':
+        return LucideFolderUp;
+      case 'folder-down':
+        return LucideFolderDown;
+      case 'file':
+        return LucideFile;
+      case 'file-plus':
+        return LucideFilePlus;
+      case 'file-up':
+        return LucideFileUp;
+      case 'file-down':
+        return LucideFileDown;
+      case 'tree':
+        return LucideFolderTree;
+      case 'chart':
+        return LucideChartArea;
       case 'pencil':
-      default:
         return LucidePencil;
-    };
+      case 'bike':
+      default:
+        return LucideBike;
+      };
   });
 
 

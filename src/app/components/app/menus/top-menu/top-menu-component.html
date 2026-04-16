@@ -1,18 +1,44 @@
 <div class="container">
     <div class="menu">
-        <span>GPX editor</span>
-        <span>Bestand</span>
-        <span>Bewerken</span>
-        <span>Weergave</span>
-        <span>Instellingen</span>
-        <span>Help</span>
-        <button matButton [matMenuTriggerFor]="menu">Menu</button>
+        <button matButton>GPX editor</button>
+        <button matButton [matMenuTriggerFor]="bestand">Bestand</button>
+        <button matButton [matMenuTriggerFor]="bewerken">Bewerken</button>
+        <button matButton [matMenuTriggerFor]="weergave">Weergave</button>
+        <button matButton [matMenuTriggerFor]="instellingen">Instellingen</button>
+        <button matButton [matMenuTriggerFor]="help">Help</button>
     </div>
 </div>
 
-<mat-menu #menu="matMenu">
+<mat-menu #bestand="matMenu">
     <div class="sub-menu">
-        <app-menu-button [label]="'Nieuw'" [icon]="'pencil'" [action]="'nieuw'" [shortKey]="'Ctrl + N'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Open'" [icon]="'folder-open'" [action]="'open'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Nieuw project'" [icon]="'folder-plus'" [action]="'nieuw-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Open project'" [icon]="'folder-up'" [action]="'open-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Bewaar project'" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <hr>
+        <app-menu-button [label]="'Nieuwe file'" [icon]="'file-plus'" [action]="'nieuwe-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Open file'" [icon]="'file-up'" [action]="'open-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Bewaar file'" [icon]="'file-down'" [action]="'bewaar-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+    </div>
+</mat-menu>
+
+<mat-menu #bewerken="matMenu">
+    <div class="sub-menu">
+    </div>
+</mat-menu>
+
+<mat-menu #weergave="matMenu">
+    <div class="sub-menu">
+        <app-menu-button [label]="'Tree'" [icon]="'tree'" [action]="'toggle-tree'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'Info'" [icon]="'chart'" [action]="'toggle-info'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+    </div>
+</mat-menu>
+
+<mat-menu #instellingen="matMenu">
+    <div class="sub-menu">
+    </div>
+</mat-menu>
+
+<mat-menu #help="matMenu">
+    <div class="sub-menu">
     </div>
 </mat-menu>

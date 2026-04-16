@@ -1,0 +1,17 @@
+.container {
+    width: 350px;
+    height: 100%;
+    padding: 15px;
+}
+
+.file-list-item {
+    background-color: lightgray;
+    border-right: 5px solid red;
+    margin-bottom: 5px;
+}
+
+.track-list-item {
+    background-color: lightgray;
+    border-right: 5px solid blue;
+    margin: 0px 10px 5px 10px;
+}

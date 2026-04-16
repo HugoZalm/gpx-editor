@@ -1,0 +1,18 @@
+<div class="container">
+    <h1>{{ projectName() }}</h1>
+    <!-- <div>currentFile: {{ gpxState.currentFile() }}</div> -->
+
+    <mat-list>
+        @for (file of projectFiles(); track file) {
+            <div class="file-list-item">
+                <div>File: {{ file.name }} ({{ file.color }})</div>
+            </div>
+            @for (track of file.tracks; track track) {
+                <div class="track-list-item">
+                    <div>Track: {{ track.name }}</div>
+                </div>
+            }
+        }
+    </mat-list>
+</div>
+
