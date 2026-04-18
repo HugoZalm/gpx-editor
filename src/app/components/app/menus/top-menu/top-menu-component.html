@@ -11,6 +11,8 @@
 
 <mat-menu #bestand="matMenu">
     <div class="sub-menu">
+        <app-menu-button [label]="'Open Test project'" [icon]="'folder-up'" [action]="'open-test-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <hr>
         <app-menu-button [label]="'Nieuw project'" [icon]="'folder-plus'" [action]="'nieuw-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
         <app-menu-button [label]="'Open project'" [icon]="'folder-up'" [action]="'open-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
         <app-menu-button [label]="'Bewaar project'" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>

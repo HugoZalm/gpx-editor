@@ -4,14 +4,20 @@
     <mat-list>
         @for (file of projectFiles(); track file) {
             <div class="file-list-item color"
-                 [style.--color]="file.color"
-                 [ngClass]="{'selected': isCurrentFile(file)}"
-                 (click)="selectFile(file)">
-                    <div>{{ file.name }}</div>
+                [style.--color]="file.color"
+                [ngClass]="{'selected': isSelected(file.id)}"
+                [matContextMenuTriggerFor]="fileMenu"
+                (contextmenu)="select('file', file)"
+                (click)="select('gpx', file)">
+                <div>{{ file.name }}</div>
             </div>
             @for (track of file.tracks; track track) {
-                <!-- <div class="track-list-item color" [style.--color]="track.color"> -->
-                <div class="track-list-item">
+                <div class="track-list-item color"
+                    [style.--color]="track.color"
+                    [ngClass]="{'selected': isSelected(track.id)}"
+                    (click)="select('track', track)"
+                    [matContextMenuTriggerFor]="trackMenu"
+                    (contextmenu)="select('track', track)">
                     <div>{{ track.name }}</div>
                 </div>
             }
@@ -19,3 +25,17 @@
     </mat-list>
 </div>
 
+<mat-menu #fileMenu="matMenu">
+    <div class="sub-menu">
+        <app-menu-button [label]="'edit'" [icon]="'icon'" [action]="'edit-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+    </div>
+</mat-menu>
+
+<mat-menu #trackMenu="matMenu">
+    <div class="sub-menu">
+        <app-menu-button [label]="'edit'" [icon]="'pencil'" [action]="'edit-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <hr>
+        <app-menu-button [label]="'copy'" [icon]="'copy'" [action]="'copy-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="'delete'" [icon]="'trash'" [action]="'delete-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+    </div>
+</mat-menu>

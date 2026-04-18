@@ -18,6 +18,9 @@ import {createEmpty, extend, Extent, getCenter} from 'ol/extent';
 import { ResolutionLike } from "ol/resolution";
 import Feature from "ol/Feature";
 import { Layer } from "ol/layer";
+import { HzxFeature } from "../gpx/model/hzxProject";
+import { MapStateService } from "./map-state-service";
+import { defaults as defaultInteractions } from 'ol/interaction';
 
 // define your custom properties
 type TrackProperties = {
@@ -35,58 +38,22 @@ type TrackProperties = {
 })
 export class MapService {
 
-  private readonly BASETRACKSTYLE = new Style({
-          stroke: new Stroke({
-            color: "red",
-            width: 5,
-          }),
-          image: new Circle({
-            radius: 5,
-            fill: new Fill({ color: "red" }),
-          }),
-        });
-  private readonly POISTYLE = new Style({
-          stroke: new Stroke({
-            color: "red",
-            width: 5,
-          }),
-          image: new Circle({
-            radius: 15,
-            stroke: new Stroke({
-              color: "red",
-              width: 3,
-            }),
-            fill: new Fill({ color: "red" }),
-          }),
-        });
-  private readonly MAPSTYLE = new Style({
-          stroke: new Stroke({
-            color: "blue",
-            width: 5,
-          }),
-          image: new Circle({
-            radius: 5,
-            fill: new Fill({ color: "blue" }),
-          }),
-        });
-
-  
-
-  // private readonly authService = inject(AuthService);
-  // private api = inject(ApiService);
+  private mapState = inject(MapStateService);
 
   private currentView!: View;
   private map!: olMap;
-  private trackStyles: Map<number, Style> = new Map();
 
   constructor() {
     this.createMap();
-    this.createAllLayers();
+    this.createBaseLayers();
+    // this.addBaseLayers();
+    // this.addBaseLayer('opentopo');
+    this.addBaseLayer('osm');
     this.addListeners();
   }
 
-  private createAllLayers() {
-    // this.createOpenTopoLayer();
+  private createBaseLayers() {
+    this.createOpenTopoLayer();
     this.createOsmLayer();
   }
 
@@ -98,6 +65,7 @@ export class MapService {
 
   private createMap(): void {
     this.map = new olMap({
+      interactions: defaultInteractions(),
       controls: [],
       layers: [],
       view: new View({
@@ -109,24 +77,98 @@ export class MapService {
     this.currentView = this.map.getView();
   }
 
+  private addBaseLayers() {
+    Array.from(this.mapState.getBaseLayers().values()).forEach(layer => {
+      this.map.addLayer(layer);
+    });
+  }
+
+  private addBaseLayer(name: string) {
+    const layer = this.mapState.getBaseLayers().get(name);
+    if (layer) {
+      this.map.addLayer(layer);
+    }
+  }
+
   private createOsmLayer(): void {
     const osm = new TileLayer({
       source: new OSM(),
     });
-    // this.layersMap.set(LayerTypes.OSM, osm);
-    this.map.addLayer(osm);
+    this.mapState.upsertBaseLayer('osm', osm);
   }
 
   private createOpenTopoLayer(): void {
-    const openTopo = new TileLayer({
+    const opentopo = new TileLayer({
       source: new XYZ({
         url: "https://{a-c}.tile.opentopomap.org/{z}/{x}/{y}.png",
         attributions:
           "© OpenStreetMap contributors, SRTM | © OpenTopoMap (CC-BY-SA)",
       }),
     });
-    // this.layersMap.set(LayerTypes.OPENTOPO, openTopo);
-    this.map.addLayer(openTopo);
+    this.mapState.upsertBaseLayer('opentopo', opentopo);
+  }
+
+  public addMissingVectorLayers() {
+      Array.from(this.mapState.getVectorLayers().values()).forEach(layer => {
+        const found = this.map.getLayers().getArray().find(l => l === layer);
+        if (!found) {
+          this.map.addLayer(layer);
+        }
+    });
+  }
+
+  public addVectorLayers() {
+      Array.from(this.mapState.getVectorLayers().values()).forEach(layer => {
+      this.map.addLayer(layer);
+    });
+  }
+
+
+  public addVectorLayer(name: string) {
+    const layer = this.mapState.getBaseLayers().get(name);
+    if (layer) {
+      this.map.addLayer(layer);
+    }
+  }
+
+  public createVectorLayers(features: HzxFeature[]): void {
+    features.forEach((feature) => this.createVectorLayer(feature));
+  }
+    
+  private createVectorLayer(feature: HzxFeature): void {
+    const vectorSource = new VectorSource({
+      features: [feature.feature]
+    });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource
+    });
+    vectorLayer.set('id', feature.metadata.id);
+    vectorLayer.set('name', feature.metadata.name);
+    vectorLayer.set('color', feature.metadata.color);
+    vectorLayer.set('selected', false);
+    vectorLayer.setStyle(this.createLayerStyle(vectorLayer));
+    this.mapState.upsertVectorLayer(feature.metadata.id, vectorLayer);
+  }
+
+  private createLayerStyle(layer: VectorLayer) {
+    return (feature: any, resolution: any) => {
+      return new Style({
+        stroke: new Stroke({
+          color: layer.get('color'),
+          width: layer.get('selected') ? 6 : 3
+        })
+      });
+    };
+  }
+
+
+  public toggleLayerSelection(id: string) {
+    const layer = this.map.getLayers().getArray().find(layer => layer.get('id') === id);
+    if (layer) {
+      const newState = !layer.get('selected');
+      layer.set('selected', newState);
+      layer.changed(); // important
+    }
   }
 
   /** Attach the map to a DOM element */
@@ -214,24 +256,24 @@ export class MapService {
   }
 
   
-  private getTrackStyle (typeId: number) {
-    const color =
-      typeId === 1 ? 'red' :
-      typeId === 2 ? 'blue' :
-      typeId === 3 ? 'green' :
-      'gray';
+  // private getTrackStyle (typeId: number) {
+  //   const color =
+  //     typeId === 1 ? 'red' :
+  //     typeId === 2 ? 'blue' :
+  //     typeId === 3 ? 'green' :
+  //     'gray';
 
-    return new Style({
-      // fill: new Fill({ color }),
-      stroke: new Stroke({
-        color: color,
-        width: 3,
-      }),
-      // image: new CircleStyle({
-      //   radius: 6,
-      //   fill: new Fill({ color }),
-      // }),
-    });
-  };
+  //   return new Style({
+  //     // fill: new Fill({ color }),
+  //     stroke: new Stroke({
+  //       color: color,
+  //       width: 3,
+  //     }),
+  //     // image: new CircleStyle({
+  //     //   radius: 6,
+  //     //   fill: new Fill({ color }),
+  //     // }),
+  //   });
+  // };
 
 }

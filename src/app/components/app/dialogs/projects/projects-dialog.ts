@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Column, HzDataTableComponent } from '../../../hz/data-table/data-table.component';
-import { Project } from '../../../../services/gpx/state/gpx-state-service';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { HzxProject } from '../../../../services/gpx/model/hzxProject';
 
 @Component({
   selector: 'app-projects-dialog',
@@ -14,7 +14,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class ProjectsDialog {
   readonly data = inject<unknown[]>(MAT_DIALOG_DATA);
 
-  public dataSource: Project[] = [];
+  public dataSource: HzxProject[] = [];
   public columns: Column[] = [
     {
       id: 'id',

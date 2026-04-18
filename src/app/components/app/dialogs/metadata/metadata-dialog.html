@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>
+  {{ 'map.import' | translate | titlecase }}
+</h2>
+
+<mat-dialog-content>
+  @if (error()) {
+    <div class="alert alert-error">{{ error() }}</div>
+  }
+
+  @if (success()) {
+    <div class="alert alert-success">{{ success() }}</div>
+  }
+
+  @if (form !== undefined) {
+    <label>{{ 'metadata.name' | translate | titlecase }}</label>
+    <hz-form-text-input [formField]="form.name"></hz-form-text-input>
+
+    <label>{{ 'metadata.color' | translate | titlecase }}</label>
+    <hz-form-text-input [formField]="form.color"></hz-form-text-input>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton (click)="cancel()">{{ 'dialog.cancel' | translate | titlecase }}</button>
+  <button matButton (click)="save()">{{ 'dialog.save' | translate | titlecase }}</button>
+</mat-dialog-actions>

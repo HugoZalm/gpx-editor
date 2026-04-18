@@ -7,6 +7,12 @@
     justify-content: center;
 }
 
+.container,
+.menu,
+mat-menu {
+    pointer-events: auto;
+}
+
 .menu {
     display: flex;
     flex-direction: row;

@@ -2,7 +2,7 @@ import { GpxStateService } from './../../services/gpx/state/gpx-state-service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MapComponent } from '../../components/app/map/map-component';
-import { MapService } from '../../components/app/map/map.service';
+import { MapService } from '../../services/map/map.service';
 import { TopMenuComponent } from "../../components/app/menus/top-menu/top-menu-component";
 import { LeftMenuComponent } from "../../components/app/menus/left-menu/left-menu-component";
 import { RightMenuComponent } from "../../components/app/menus/right-menu/right-menu-component";
