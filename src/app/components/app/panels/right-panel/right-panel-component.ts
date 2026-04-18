@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MenuButtonComponent } from '../../buttons/menu-button/menu-button-component';
 import { MatDialog } from '@angular/material/dialog';
 import { MetadataDialog } from '../../dialogs/metadata/metadata-dialog';
+import { GpxUtilsService } from '../../../../services/gpx/utils/gpx-utils-service';
 
 export interface FileItem {
   id: string;
@@ -53,6 +54,7 @@ export class RightPanelComponent {
   readonly dialog = inject(MatDialog);
 
   gpxState = inject(GpxStateService);
+  gpxUtilsService = inject(GpxUtilsService);
   mapService = inject(MapService);
 
   public projectMetadata = this.gpxState.projectMetaData;
@@ -111,6 +113,9 @@ export class RightPanelComponent {
           item.metadata = result;
           if (type === 'track') {
             this.gpxState.updateItem(item as HzxTrack);
+            const feature = this.gpxUtilsService.gettrackAsFeature(item as HzxTrack);
+            this.mapService.updateVectorLayer(feature, true);
+            this.mapService.replaceVectorLayer(item.metadata.id);
           }
         }
       });

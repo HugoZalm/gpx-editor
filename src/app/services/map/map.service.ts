@@ -117,6 +117,17 @@ export class MapService {
     });
   }
 
+  public replaceVectorLayer(id: string) {
+    const found = this.map.getLayers().getArray().find(l => l.get('id') === id);
+      if (found) {
+        const layer = this.mapState.getVectorLayers().get(id);
+        if (layer) {
+          this.map.removeLayer(found);
+          this.map.addLayer(layer);
+        }
+      }
+  }
+
   public addVectorLayers() {
       Array.from(this.mapState.getVectorLayers().values()).forEach(layer => {
       this.map.addLayer(layer);
@@ -149,6 +160,22 @@ export class MapService {
     vectorLayer.setStyle(this.createLayerStyle(vectorLayer));
     this.mapState.upsertVectorLayer(feature.metadata.id, vectorLayer);
   }
+
+  public updateVectorLayer(feature: HzxFeature, selected: boolean): void {
+    const vectorSource = new VectorSource({
+      features: [feature.feature]
+    });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource
+    });
+    vectorLayer.set('id', feature.metadata.id);
+    vectorLayer.set('name', feature.metadata.name);
+    vectorLayer.set('color', feature.metadata.color);
+    vectorLayer.set('selected', selected);
+    vectorLayer.setStyle(this.createLayerStyle(vectorLayer));
+    this.mapState.upsertVectorLayer(feature.metadata.id, vectorLayer);
+  }
+
 
   private createLayerStyle(layer: VectorLayer) {
     return (feature: any, resolution: any) => {
