@@ -1,0 +1,80 @@
+{
+    "menu": {
+        "project": "Project",
+        "project.tooltip": "Beheer het project",
+        "newproject": "Nieuw",
+        "newproject.tooltip": "Maak een nieuw project",
+        "openproject": "Open",
+        "openproject.tooltip": "Open een bestaand project",
+        "saveproject": "Bewaar",
+        "saveproject.tooltip": "Bewaar het project",
+        "exportproject": "Export",
+        "exportproject.tooltip": "Exporteer het project",
+        "newfile": "Nieuw Bestand",
+        "newfile.tooltip": "Voeg een nieuw bestand toe aan het project",
+        "importfile": "Open Bestand",
+        "importfile.tooltip": "Voeg een bestaande file toe aan het project",
+        "manage": "Bewerk",
+        "display": "Weergave",
+        "tree": "Bestandsboom",
+        "info": "Infoscherm",
+        "settings": "Settings",
+        "help": "Help",
+        "login": "login",
+        "logout": "logout"
+    },
+    "dialog": {
+        "save": "bewaar",
+        "cancel": "terug",
+        "link": "link"
+    },
+    "errors": {
+        "Failed to load": "'Fout bij het laden van'",
+        "You are already registered to this mapcode.": "Deze mapcode is al aan uw account gekoppeld.",
+        "This mapcode is already assigned to another user.": "Deze mapcode is reeds aan een ander account gekoppeld.",
+        "Mapcode not found": "Deze mapcode is niet gevonden.",
+        "Map not found for mapcode": "Deze mapcode behoort niet bij een kaart.",
+        "No user is currently assigned to this mapcode.": "deze mapcode is niet gekoppeld aan een account.",
+        "This mapcode is assigned to a different user — you cannot remove it.": "Deze mapcode is gekoppeld aan een ander account. U kunt hem niet ontkoppelen.",
+        "Amount must be between 1 and 10000": "De waarde moet tussen 1 en 10000 liggen."
+    },
+    "manage": {
+        "maps": "beheer kaarten",
+        "tracks": "beheer routes",
+        "track": "beheer route",
+        "pois": "beheer punten",
+        "poi": "beheer punt"
+    },
+    "create": {
+        "track": "maak route",
+        "poi": "maak punt"
+    },
+    "map": {
+        "name": "naam",
+        "description": "beschrijving",
+        "extent": "extent",
+        "create": "maak kaart",
+        "manage": "beheer kaart",
+        "managetracks": "beheer gekoppelde routes",
+        "link": "link kaart",
+        "code": "code",
+        "getcodes": "toon kaartcodes",
+        "import": "importeer kaart",
+        "importinfo": "laad een geojson met alle kaartinfo.",
+        "export": "exporteer kaart"
+    },
+    "track": {
+        "name": "naam",
+        "description": "beschrijving",
+        "geom": "geometrie",
+        "create": "maak track",
+        "manage": "beheer track"
+    },
+    "poi": {
+        "name": "naam",
+        "description": "beschrijving",
+        "geom": "geometrie",
+        "create": "maak point",
+        "manage": "beheer point"
+    }
+}
