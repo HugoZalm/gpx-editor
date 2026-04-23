@@ -13,11 +13,11 @@ import { Stroke, Style } from "ol/style";
 import XYZ from "ol/source/XYZ";
 import WKT from "ol/format/WKT";
 import {createEmpty, extend, Extent, getCenter} from 'ol/extent';
-import { HzxFeature } from "../gpx/model/hzxProject";
 import { MapStateService } from "./map-state-service";
 import { defaults as defaultInteractions } from 'ol/interaction';
 import Select from 'ol/interaction/Select.js';
 import MapBrowserEvent from "ol/MapBrowserEvent";
+import { HzxFeature } from "../project/model/hzxProject";
 
 
 // define your custom properties
@@ -52,10 +52,20 @@ export class MapService {
   }
 
   private addListeners() {
+    this.addSelection();
+    this.map.on("moveend", () => this.onMoveEnd());
+  }
+
+  private addSelection() {
     this.select = new Select();
     this.map.addInteraction(this.select);
-    this.map.on("moveend", () => this.onMoveEnd());
     this.map.on('singleclick', (event) => this.onSelect(event));
+    this.mapState.hasSelectInteraction.set(true);
+  }
+
+  private removeSelection() {
+    this.map.removeInteraction(this.select);
+    this.mapState.hasSelectInteraction.set(false);
   }
       
   private onSelect(event: MapBrowserEvent<PointerEvent | KeyboardEvent | WheelEvent>) {
@@ -198,6 +208,14 @@ export class MapService {
       const newState = !layer.get('selected');
       layer.set('selected', newState);
       layer.changed(); // important
+    }
+  }
+
+  setSelection(active: boolean) {
+    if (active === true) {
+      this.addSelection();
+    } else {
+      this.removeSelection();
     }
   }
 

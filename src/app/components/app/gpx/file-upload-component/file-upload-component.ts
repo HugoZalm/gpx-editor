@@ -21,7 +21,7 @@ export interface ImportFiles {
   templateUrl: './file-upload-component.html',
   styleUrl: './file-upload-component.scss',
 })
-export class FileUploadComponent {
+export class XFileUploadComponent {
   private trackFormModel = signal<ImportFiles>({ files: [] });
   public form: FieldTree<ImportFiles> | undefined = undefined;
 

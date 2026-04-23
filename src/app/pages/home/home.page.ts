@@ -1,4 +1,4 @@
-import { GpxStateService } from './../../services/gpx/state/gpx-state-service';
+import { ProjectStateService } from './../../services/project/state/project-state-service';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MapComponent } from '../../components/app/map/map-component';
@@ -8,8 +8,8 @@ import { LeftMenuComponent } from "../../components/app/menus/left-menu/left-men
 import { RightMenuComponent } from "../../components/app/menus/right-menu/right-menu-component";
 import { BottomPanelComponent } from "../../components/app/panels/bottom-panel/bottom-panel-component";
 import { RightPanelComponent } from '../../components/app/panels/right-panel/right-panel-component';
-import { StateService } from '../../services/state/state-service';
 import { HttpClient } from '@angular/common/http';
+import { UiStateService } from '../../services/ui/ui-state-service';
 
 // export interface State {
 //   showRightPanel: boolean;
@@ -22,9 +22,8 @@ import { HttpClient } from '@angular/common/http';
   imports: [
     CommonModule,
     MapComponent,
-    TopMenuComponent,
     LeftMenuComponent,
-    RightMenuComponent,
+    // RightMenuComponent,
     BottomPanelComponent,
     RightPanelComponent
 ],
@@ -33,8 +32,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomePage implements OnInit {
   private mapService = inject(MapService);
-  public stateService = inject(StateService);
-  public gpxStateService = inject(GpxStateService);
+  public stateService = inject(UiStateService);
+  public projectStateService = inject(ProjectStateService);
   private http = inject(HttpClient);
 
   ngOnInit() {

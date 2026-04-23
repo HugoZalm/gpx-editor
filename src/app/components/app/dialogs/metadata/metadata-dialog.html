@@ -15,8 +15,10 @@
     <label>{{ 'metadata.name' | translate | titlecase }}</label>
     <hz-form-text-input [formField]="form.name"></hz-form-text-input>
 
-    <label>{{ 'metadata.color' | translate | titlecase }}</label>
-    <hz-form-text-input [formField]="form.color"></hz-form-text-input>
+    @if (shouldEdit('color')) {
+      <label>{{ 'metadata.color' | translate | titlecase }}</label>
+      <hz-form-text-input [formField]="form.color"></hz-form-text-input>
+    }
   }
 </mat-dialog-content>
 

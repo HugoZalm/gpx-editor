@@ -1,3 +1,18 @@
 <div class="container">
-    BOTTOM
+
+    <div class="panel-button">
+        @if (uiStateService.panels().bottom) {
+            <app-icon-button [icon]="'panel-bottom-close'" [action]="'toggle-panel'" (onAction)="handleAction($event)" [tooltip]="'menu.panel-bottom-close'"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'panel-bottom-open'" [action]="'toggle-panel'" (onAction)="handleAction($event)" [tooltip]="'menu.panel-bottom-open'"></app-icon-button>
+        }
+    </div>
+
+    @if (uiStateService.panels().bottom) {
+        <div class="panel">
+                BOTTOM
+        </div>
+    }
 </div>
+

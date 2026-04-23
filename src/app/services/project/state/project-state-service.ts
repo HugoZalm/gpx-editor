@@ -8,7 +8,7 @@ import {
   HzxWaypoint,
 } from '../model/hzxProject';
 
-type HzxItem = HzxGpx | HzxTrack | HzxRoute | HzxWaypoint;
+type HzxItem = HzxProject | HzxGpx | HzxTrack | HzxRoute | HzxWaypoint;
 
 export interface SelectedItem {
   type: string;
@@ -18,15 +18,20 @@ export interface SelectedItem {
 @Injectable({
   providedIn: 'root',
 })
-export class GpxStateService {
-  public projectMetaData = signal<HzxMetaData>({
-    id: crypto.randomUUID(),
-    name: 'undefined',
-    color: '',
-  });
+export class ProjectStateService {
+  public projectMetaData = signal<HzxMetaData>({ id: '', name: '', color: '' });
   public projectFiles = signal<HzxGpx[]>([]);
   public selectedItem = signal<SelectedItem | undefined>(undefined);
   private index = new Map<string, HzxItem>();
+
+  constructor() {
+    this.projectMetaData.set({
+      id: crypto.randomUUID(),
+      name: 'new project',
+      color: '',
+    });
+    this.rebuildIndex();
+  }
 
   /* PROJECT LEVEL */
   getProject(): HzxProject {
@@ -208,6 +213,7 @@ export class GpxStateService {
   /* Index */
   rebuildIndex(): void {
     this.index = new Map<string, HzxItem>();
+    this.index.set(this.projectMetaData().id, this.getProject());
     Array.from(this.projectFiles()).forEach((file: HzxGpx) => {
       this.index.set(file.metadata.id, file);
       file.tracks.forEach((t) => this.index.set(t.metadata.id, t));

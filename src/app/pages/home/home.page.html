@@ -4,20 +4,14 @@
     <div class="vertical">
       <div class="horizontal">
         <app-map></app-map>
-        @if (stateService.panels().bottom) {
           <app-bottom-panel></app-bottom-panel>
-        }
         <div class="overlays">
-          <app-top-menu></app-top-menu>
-          @if(gpxStateService.hasSelection()) {
-            <app-left-menu></app-left-menu>
-          }
-          <app-right-menu></app-right-menu>
+          <!-- <app-top-menu></app-top-menu> -->
+          <app-left-menu></app-left-menu>
+          <!-- <app-right-menu></app-right-menu> -->
         </div>
       </div>
-      @if (stateService.panels().right) {
         <app-right-panel></app-right-panel>
-      }
     </div>
   </div>
 

@@ -1,3 +1,22 @@
+// .container {
+//     height: 150px;
+// }
+
 .container {
+    position: relative;
+}
+
+.panel {
     height: 150px;
+    padding: 15px;
+}
+
+.panel-button {
+    position: absolute;
+    left: 5px;
+    top: -44px;
+    height: 44px;
+    background-color: #F5F5F5;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }

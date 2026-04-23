@@ -1,11 +1,9 @@
-import { inject, Injectable } from '@angular/core';
-import { GeoJSON, ParsedGPX, parseGPX, Point, Track } from '@we-gold/gpxjs';
-import { GpxStateService } from '../state/gpx-state-service';
-import { HzxFeature, HzxGpx, HzxMetaData, HzxTrack } from '../model/hzxProject';
+import { Injectable } from '@angular/core';
 import Feature from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 import { fromLonLat } from 'ol/proj';
 import { LineString } from 'ol/geom';
+import { HzxGpx, HzxFeature, HzxTrack } from '../../project/model/hzxProject';
 
 @Injectable({
   providedIn: 'root',

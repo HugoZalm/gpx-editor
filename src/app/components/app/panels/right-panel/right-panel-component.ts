@@ -1,171 +1,57 @@
 import { CommonModule } from '@angular/common';
-import { GpxStateService } from './../../../../services/gpx/state/gpx-state-service';
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatListModule } from '@angular/material/list';
-import { MetaData, Route, Track, Waypoint } from '@we-gold/gpxjs';
-import { HzxRoute, HzxTrack, HzxWaypoint } from '../../../../services/gpx/model/hzxProject';
-import { MapService } from '../../../../services/map/map.service';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { MenuButtonComponent } from '../../buttons/menu-button/menu-button-component';
-import { MatDialog } from '@angular/material/dialog';
-import { MetadataDialog } from '../../dialogs/metadata/metadata-dialog';
-import { GpxUtilsService } from '../../../../services/gpx/utils/gpx-utils-service';
-import { stopPropagation } from 'ol/events/Event';
-
-export interface FileItem {
-  id: string;
-  name: string;
-  color: string;
-  metadata: MetaData;
-  tracks: TrackItem[];
-  routes: RouteItem[];
-  waypoints: WaypointItem[];
-}
-
-export interface TrackItem {
-  id: string;
-  name: string;
-  color: string;
-  track: HzxTrack;
-}
-
-export interface RouteItem {
-  id: string;
-  name: string;
-  color: string;
-  route: HzxRoute;
-}
-
-export interface WaypointItem {
-  id: string;
-  name: string;
-  color: string;
-  waypoint: HzxWaypoint;
-}
+import { IconButtonComponent } from '../../buttons/icon-button/icon-button-component';
+import { UiStateService, PanelTypes } from '../../../../services/ui/ui-state-service';
+import { ProjectComponent } from '../../project/project-component';
+import { SettingsComponent } from "../../settings/settings-component";
+import { DocumentationComponent } from '../../documentation/documentation-component';
+import { Translate } from 'ol/interaction';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-right-panel',
-  imports: [CommonModule, MatListModule, MatButtonModule, MatMenuModule, MenuButtonComponent],
+  imports: [
+    CommonModule,
+    ProjectComponent,
+    SettingsComponent,
+    DocumentationComponent,
+    IconButtonComponent
+],
   templateUrl: './right-panel-component.html',
   styleUrl: './right-panel-component.scss',
 })
 export class RightPanelComponent {
-  readonly dialog = inject(MatDialog);
 
-  gpxState = inject(GpxStateService);
-  gpxUtilsService = inject(GpxUtilsService);
-  mapService = inject(MapService);
-
-  public projectMetadata = this.gpxState.projectMetaData;
-  public projectFiles = computed(() => {
-    const files = Array.from(this.gpxState.projectFiles().values()).map((gpx) => {
-      return {
-        id: gpx.metadata.id,
-        name: gpx.raw.metadata.name,
-        color: gpx.metadata.color,
-        metadata: gpx.raw.metadata,
-        tracks: this.getTracks(gpx.tracks),
-        routes: this.getRoutes(gpx.routes),
-        waypoints: this.getWaypoints(gpx.waypoints) ?? [],
-      } as FileItem;
-    });
-    console.log('FILES', files);
-    return files;
-  });
-
-  changeProjectName() {
-    this.gpxState.updateProjectName('TEST');
-  }
-
-  select(event: Event, type: string, value: FileItem | TrackItem): void {
-    event.stopPropagation();
-    const currentSelectedItemId = this.gpxState.getSelectedItem()?.id;
-    if (currentSelectedItemId) {
-      this.mapService.toggleLayerSelection(currentSelectedItemId);
-    }
-    this.gpxState.setSelectedItem(type, value.id);
-    this.mapService.toggleLayerSelection(value.id);
-  }
-
-  isSelected(id: string): boolean {
-    return this.gpxState.isSelected(id);
-  }
+  public uiStateService = inject(UiStateService);
+  public showProject = signal<boolean>(true);
+  public showSettings = signal<boolean>(false);
+  public showDocumentation = signal<boolean>(false);
 
   handleAction(action: string) {
     switch (action) {
-      case 'edit-file':
-      case 'edit-track':
-        this.openMetadataDialog();
+      case 'toggle-panel':
+        this.uiStateService.togglePanel(PanelTypes.RIGHT);
         break;
-      case 'cut-track':
+      case 'show-settings':
+        this.closeAll();
+        this.showSettings.set(true);
+        break;
+      case 'show-documentation':
+        this.closeAll();
+        this.showDocumentation.set(true);
+        break;
+      case 'show-project':
+        this.closeAll();
+        this.showProject.set(true);
         break;
     }
   }
 
-  private openMetadataDialog() {
-    const item = this.gpxState.findSelectedItem();
-    const type = this.gpxState.getSelectedItem()?.type;
-    if (item) {
-      const dialogRef = this.dialog.open(MetadataDialog, { data: item.metadata });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result !== undefined) {
-          console.log(result);
-          item.metadata = result;
-          if (type === 'track') {
-            this.gpxState.updateItem(item as HzxTrack);
-            const feature = this.gpxUtilsService.gettrackAsFeature(item as HzxTrack);
-            this.mapService.updateVectorLayer(feature, true);
-            this.mapService.replaceVectorLayer(item.metadata.id);
-          }
-        }
-      });
-    }
+  private closeAll() {
+    this.showSettings.set(false);
+    this.showDocumentation.set(false);
+    this.showProject.set(false);
   }
 
-  private getTracks(tracks: HzxTrack[]): TrackItem[] {
-    if (!tracks) {
-      return [];
-    }
-    const items = tracks.map((track) => {
-      return {
-        id: track.metadata.id,
-        name: track.metadata.name,
-        color: track.metadata.color,
-        track: track,
-      } as TrackItem;
-    });
-    return items;
-  }
-
-  private getRoutes(routes: HzxRoute[]): RouteItem[] {
-    if (!routes) {
-      return [];
-    }
-    const items = routes.map((route) => {
-      return {
-        id: route.metadata.id,
-        name: route.metadata.name,
-        color: route.metadata.color,
-        route: route,
-      } as RouteItem;
-    });
-    return items;
-  }
-
-  private getWaypoints(waypoints: HzxWaypoint[]): WaypointItem[] {
-    if (!waypoints) {
-      return [];
-    }
-    const items = waypoints.map((waypoint) => {
-      return {
-        id: waypoint.metadata.id,
-        name: waypoint.metadata.name,
-        color: waypoint.metadata.color,
-        waypoint: waypoint,
-      } as WaypointItem;
-    });
-    return items;
-  }
 }

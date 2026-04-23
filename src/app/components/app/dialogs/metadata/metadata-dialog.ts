@@ -16,9 +16,12 @@ import { FieldTree, form, FormField } from '@angular/forms/signals';
 import { runInInjectionContext, Injector } from '@angular/core';
 import { HzFormFileInput } from '../../../hz/forms/form-file-input';
 import { TranslatePipe } from '@ngx-translate/core';
-import { HzxMetaData } from '../../../../services/gpx/model/hzxProject';
+import { HzxMetaData } from '../../../../services/project/model/hzxProject';
 
-
+export interface MetadataDialogData {
+  metadata: HzxMetaData;
+  edit: string[];
+}
 @Component({
   selector: 'app-import-admin-dialog',
   imports: [
@@ -39,11 +42,12 @@ import { HzxMetaData } from '../../../../services/gpx/model/hzxProject';
 })
 export class MetadataDialog {
   readonly dialogRef = inject(MatDialogRef<MetadataDialog>);
-  readonly data = inject<HzxMetaData>(MAT_DIALOG_DATA);
+  readonly data = inject<MetadataDialogData>(MAT_DIALOG_DATA);
+  public edit = signal<string[]>(this.data.edit);
 
   public error = signal<string>('');
   public success = signal<string>('');
-  private trackFormModel = signal<HzxMetaData>(this.data);
+  private trackFormModel = signal<HzxMetaData>(this.data.metadata);
   public form: FieldTree<HzxMetaData> | undefined = undefined;
 
   private injector = inject(Injector);
@@ -56,16 +60,21 @@ export class MetadataDialog {
     });
   }
 
+  public shouldEdit(property: string): boolean {
+    const found = this.edit().find((item) => item === property);
+    return found !== undefined;
+  }
+
   cancel(): void {
     this.dialogRef.close();
   }
 
   save(): void {
-    const name = this.form?.id().value() && this.form?.id().value().length > 0 ? this.form?.id().value() : this.data.id
+    const name = this.form?.id().value() && this.form?.id().value().length > 0 ? this.form?.id().value() : this.data.metadata.id
     const result = {
-      id: this.data.id,
-      name: this.form?.name().value() && this.form?.name().value().length > 0 ? this.form?.name().value() : this.data.name,
-      color: this.form?.color().value() && this.form?.color().value().length > 0 ? this.form?.color().value() : this.data.color
+      id: this.data.metadata.id,
+      name: this.form?.name().value() && this.form?.name().value().length > 0 ? this.form?.name().value() : this.data.metadata.name,
+      color: this.form?.color().value() && this.form?.color().value().length > 0 ? this.form?.color().value() : this.data.metadata.color
     };
     this.dialogRef.close(result);
   }

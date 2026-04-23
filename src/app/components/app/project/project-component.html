@@ -1,0 +1,115 @@
+<div
+  class="projectname"
+  [matContextMenuTriggerFor]="projectMenu"
+  (contextmenu)="select($event, 'project')"
+>
+  <div>
+    <span class="gap">{{ 'project' | translate | titlecase}}:</span>
+    <span>{{ projectMetadata().name }}</span>
+  </div>
+</div>
+
+<mat-list>
+  @for (file of projectFiles(); track file) {
+    <div
+      class="file-list-item"
+      [matContextMenuTriggerFor]="fileMenu"
+      (contextmenu)="select($event, 'file', file)"
+    >
+      <div>{{ file.name }}</div>
+
+      @for (track of file.tracks; track track) {
+        <div
+          class="track-list-item color"
+          [style.--color]="track.color"
+          [ngClass]="{ selected: isSelected(track.id) }"
+          (click)="select($event, 'track', track)"
+          [matContextMenuTriggerFor]="trackMenu"
+          (contextmenu)="select($event, 'track', track)"
+        >
+          <div>{{ track.name }}</div>
+        </div>
+      }
+    </div>
+  }
+</mat-list>
+
+<mat-menu #projectMenu="matMenu">
+  <div class="sub-menu">
+    <app-menu-button
+      [label]="'menu.editproject'"
+      [icon]="'pencil'"
+      [action]="'edit-project'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.editproject.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
+      [label]="'menu.newproject'"
+      [icon]="'folder-plus'"
+      [action]="'new-project'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.newproject.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.openproject'"
+      [icon]="'folder-up'"
+      [action]="'open-project'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.openproject.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.saveproject'"
+      [icon]="'folder-down'"
+      [action]="'save-project'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.saveproject.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.exportproject'"
+      [icon]="'folder-output'"
+      [action]="'export-project'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.exportproject.tooltip'"
+    ></app-menu-button>
+  </div>
+</mat-menu>
+
+<mat-menu #fileMenu="matMenu">
+  <div class="sub-menu">
+    <app-menu-button
+      [label]="'menu.editfile'"
+      [icon]="'pencil'"
+      [action]="'edit-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.editfile.tooltip'"
+    ></app-menu-button>
+  </div>
+</mat-menu>
+
+<mat-menu #trackMenu="matMenu">
+  <div class="sub-menu">
+    <app-menu-button
+      [label]="'menu.edittrack'"
+      [icon]="'pencil'"
+      [action]="'edit-track'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.edittrack.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
+      [label]="'menu.duplicatetrack'"
+      [icon]="'copy'"
+      [action]="'copy-track'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.duplicatetrack.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.deletetrack'"
+      [icon]="'trash'"
+      [action]="'delete-track'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.deletetrack.tooltip'"
+    ></app-menu-button>
+  </div>
+</mat-menu>

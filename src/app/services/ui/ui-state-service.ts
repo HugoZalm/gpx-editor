@@ -13,7 +13,7 @@ export enum PanelTypes {
 @Injectable({
   providedIn: 'root',
 })
-export class StateService {
+export class UiStateService {
 
   panels = signal<Panels>({ right: true, bottom: false});
 

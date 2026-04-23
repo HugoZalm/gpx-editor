@@ -11,6 +11,8 @@ export class MapStateService {
   vectorLayers = signal<Map<string, VectorLayer>>(new Map());
   baseLayers = signal<Map<string, TileLayer>>(new Map());
 
+  hasSelectInteraction = signal<boolean>(false);
+
   /* VectorLayers */
   getVectorLayers(): Map<string, VectorLayer> {
     return this.vectorLayers();

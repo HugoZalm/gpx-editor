@@ -5,13 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MenuButtonComponent } from '../../buttons/menu-button/menu-button-component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportDialog } from '../../dialogs/import/import-dialog';
-import { PanelTypes, StateService } from '../../../../services/state/state-service';
-import { GpxStateService } from '../../../../services/gpx/state/gpx-state-service';
 import { GpxUtilsService } from '../../../../services/gpx/utils/gpx-utils-service';
 import { MapService } from '../../../../services/map/map.service';
-import { HzxGpx } from '../../../../services/gpx/model/hzxProject';
 import { CommonModule, TitleCasePipe } from '@angular/common';
 import { TranslatePipe, TranslateService, _ } from '@ngx-translate/core';
+import { ProjectStateService } from '../../../../services/project/state/project-state-service';
+import { ProjectService } from '../../../../services/project/project-service';
+import { PanelTypes, UiStateService } from '../../../../services/ui/ui-state-service';
 
 export interface MenuItem {
   id: string;
@@ -44,11 +44,8 @@ export class TopMenuComponent {
   readonly dialog = inject(MatDialog);
   private translate = inject(TranslateService);
 
-  private stateService = inject(StateService);
-  private mapService = inject(MapService);
-  private gpxStateService = inject(GpxStateService);
-  private gpxParseService = inject(GpxParseService);
-  private gpxUtilsService = inject(GpxUtilsService);
+  private uiStateService = inject(UiStateService);
+  private projectService = inject(ProjectService);
 
   public menuItems = signal<MenuItem[]>([]);
   // private translations: any = {};
@@ -72,7 +69,8 @@ export class TopMenuComponent {
         this.openImportDialog('hzx');
         break;
       case 'save-project':
-        this.saveProject();
+        this.projectService.saveProject();
+        // this.saveProject();
         break;
       case 'new-file':
         break;
@@ -83,28 +81,12 @@ export class TopMenuComponent {
         // this.saveCurrentFile();
         break;
       case 'toggle-tree':
-        this.stateService.togglePanel(PanelTypes.RIGHT);
+        this.uiStateService.togglePanel(PanelTypes.RIGHT);
         break;
       case 'toggle-info':
-        this.stateService.togglePanel(PanelTypes.BOTTOM);
+        this.uiStateService.togglePanel(PanelTypes.BOTTOM);
         break;
     }
-  }
-
-  private saveProject() {
-    const filename = 'export.hzx';
-    const project = this.gpxStateService.getProject();
-    const json = JSON.stringify(project, null, 2);
-    console.log('SAVED DATA', json);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-
-    URL.revokeObjectURL(url);
   }
 
   private openImportDialog(type?: string) {
@@ -112,25 +94,10 @@ export class TopMenuComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
         if (type === 'gpx') {
-          const gpx = this.gpxParseService.parse(result);
-          if (gpx) {
-            const id = this.gpxStateService.addFile(gpx);
-            const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
-            this.mapService.createVectorLayers(features);
-            this.mapService.addMissingVectorLayers();
-            if (id) {
-              this.gpxStateService.setSelectedItem('gpx', id);
-            }
-          }
+          this.projectService.importProject(result);
         }
         if (type === 'hzx') {
-          const project = JSON.parse(result);
-          this.gpxStateService.setProject(project);
-          project.files.forEach((gpx: HzxGpx) => {
-            const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
-            this.mapService.createVectorLayers(features);
-            this.mapService.addMissingVectorLayers();
-          });
+          this.projectService.importFile(result);
         }
       }
     });
@@ -145,10 +112,10 @@ export class TopMenuComponent {
         this.createButton('new-project', 'menu.newproject', 'folder-plus', 'menu.newproject.tooltip'),
         this.createButton('open-project', 'menu.openproject', 'folder-up', 'menu.openproject.tooltip'),
         this.createButton('save-project', 'menu.saveproject', 'folder-down', 'menu.saveproject.tooltip'),
-        this.createButton('export-project', 'menu.exportproject', 'folder-down', 'menu.exportproject.tooltip'),
+        this.createButton('export-project', 'menu.exportproject', 'folder-output', 'menu.exportproject.tooltip'),
         this.createButton('hr'),
-        this.createButton('new-file', 'menu.newfile', 'folder-plus', 'menu.newfile.tooltip'),
-        this.createButton('open-file', 'menu.importfile', 'folder-up', 'menu.importfile.tooltip'),
+        this.createButton('new-file', 'menu.newfile', 'file-plus', 'menu.newfile.tooltip'),
+        this.createButton('open-file', 'menu.importfile', 'file-up', 'menu.importfile.tooltip'),
       ]
     });
     items.push({ 

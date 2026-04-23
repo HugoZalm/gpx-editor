@@ -1,84 +1,37 @@
-<!-- <div class="container">
-    <h1 (click)="changeProjectName()">{{ projectMetadata().name }}</h1>
-
-    <mat-list>
-        @for (file of projectFiles(); track file) {
-            <div class="file-list-item color"
-                [style.--color]="file.color"
-                [ngClass]="{'selected': isSelected(file.id)}"
-                [matContextMenuTriggerFor]="fileMenu"
-                (contextmenu)="select('file', file)"
-                (click)="select('gpx', file)">
-                <div>{{ file.name }}</div>
-            </div>
-            @for (track of file.tracks; track track) {
-                <div class="track-list-item color"
-                    [style.--color]="track.color"
-                    [ngClass]="{'selected': isSelected(track.id)}"
-                    (click)="select('track', track)"
-                    [matContextMenuTriggerFor]="trackMenu"
-                    (contextmenu)="select('track', track)">
-                    <div>{{ track.name }}</div>
-                </div>
-            }
-        }
-    </mat-list>
-</div>
-
-<mat-menu #fileMenu="matMenu">
-    <div class="sub-menu">
-        <app-menu-button [label]="'edit'" [icon]="'icon'" [action]="'edit-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-    </div>
-</mat-menu>
-
-<mat-menu #trackMenu="matMenu">
-    <div class="sub-menu">
-        <app-menu-button [label]="'edit'" [icon]="'pencil'" [action]="'edit-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <hr>
-        <app-menu-button [label]="'copy'" [icon]="'copy'" [action]="'copy-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'delete'" [icon]="'trash'" [action]="'delete-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-    </div>
-</mat-menu> -->
-
-
 <div class="container">
-    <h1 (click)="changeProjectName()">{{ projectMetadata().name }}</h1>
 
-    <mat-list>
-        @for (file of projectFiles(); track file) {
-            <div class="file-list-item color"
-                [ngClass]="{'selected': isSelected(file.id)}"
-                [matContextMenuTriggerFor]="fileMenu"
-                (contextmenu)="select($event, 'file', file)"
-                (click)="select($event, 'gpx', file)">
-                <div>{{ file.name }}</div>
-            
-                @for (track of file.tracks; track track) {
-                    <div class="track-list-item color"
-                        [style.--color]="track.color"
-                        [ngClass]="{'selected': isSelected(track.id)}"
-                        (click)="select($event, 'track', track)"
-                        [matContextMenuTriggerFor]="trackMenu"
-                        (contextmenu)="select($event, 'track', track)">
-                        <div>{{ track.name }}</div>
-                    </div>
-                }
-            </div>
+    <div class="panel-button">
+        @if (uiStateService.panels().right) {
+            <app-icon-button [icon]="'panel-right-close'" [action]="'toggle-panel'" (onAction)="handleAction($event)" [tooltip]="'menu.panel-right-close.tooltip'"></app-icon-button>
         }
-    </mat-list>
+        @else {
+            <app-icon-button [icon]="'panel-right-open'" [action]="'toggle-panel'" (onAction)="handleAction($event)" [tooltip]="'menu.panel-right-open.tooltip'"></app-icon-button>
+        }
+    </div>
+
+    @if (uiStateService.panels().right) {
+        <div class="panel">
+            @if (showProject()) {
+                <div class="panel-buttons">
+                    <app-icon-button [icon]="'settings'" [action]="'show-settings'" (onAction)="handleAction($event)" [tooltip]="'menu.showsettings.tooltip'"></app-icon-button>
+                    <app-icon-button [icon]="'documentation'" [action]="'show-documentation'" (onAction)="handleAction($event)" [tooltip]="'menu.showdocumentation.tooltip'"></app-icon-button>
+                </div>
+                <app-project-component></app-project-component>
+            }
+
+            @if (showSettings()) {
+                <div class="panel-buttons">
+                    <app-icon-button [icon]="'close'" [action]="'show-project'" (onAction)="handleAction($event)" [tooltip]="'menu.showproject.tooltip'"></app-icon-button>
+                </div>
+                <app-settings-component></app-settings-component>
+            }
+
+            @if (showDocumentation()) {
+                <div class="panel-buttons">
+                    <app-icon-button [icon]="'close'" [action]="'show-project'" (onAction)="handleAction($event)" [tooltip]="'menu.showproject.tooltip'"></app-icon-button>
+                </div>
+                <app-documentation-component></app-documentation-component>
+            }
+        </div>
+    }
 </div>
-
-<mat-menu #fileMenu="matMenu">
-    <div class="sub-menu">
-        <app-menu-button [label]="'edit'" [icon]="'icon'" [action]="'edit-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-    </div>
-</mat-menu>
-
-<mat-menu #trackMenu="matMenu">
-    <div class="sub-menu">
-        <app-menu-button [label]="'edit'" [icon]="'pencil'" [action]="'edit-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <hr>
-        <app-menu-button [label]="'copy'" [icon]="'copy'" [action]="'copy-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'delete'" [icon]="'trash'" [action]="'delete-track'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-    </div>
-</mat-menu>

@@ -1,13 +1,11 @@
-import { inject, Injectable } from '@angular/core';
-import { GeoJSON, ParsedGPX, parseGPX, Point, Route, Track, Waypoint } from '@we-gold/gpxjs';
-import { GpxStateService } from '../state/gpx-state-service';
-import { HzxGpx, HzxMetaData, HzxRoute, HzxTrack, HzxWaypoint } from '../model/hzxProject';
+import { Injectable } from '@angular/core';
+import { ParsedGPX, parseGPX, Route, Track, Waypoint } from '@we-gold/gpxjs';
+import { HzxGpx, HzxMetaData, HzxTrack, HzxRoute, HzxWaypoint } from '../../project/model/hzxProject';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GpxParseService {
-  gpxState = inject(GpxStateService);
 
   NAMES = [
     'Fjord', 'Klif', 'Mica', 'Sintel', 'Kwarts', 'Leisteen', 'Echo', 'Duin', 'Varen', 'Klimop',

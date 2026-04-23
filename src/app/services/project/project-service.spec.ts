@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { GpxStateService } from './gpx-state-service';
+import { ProjectStateService } from './project-state-service';
 
 describe('GpxStateService', () => {
-  let service: GpxStateService;
+  let service: ProjectStateService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(GpxStateService);
+    service = TestBed.inject(ProjectStateService);
   });
 
   it('should be created', () => {

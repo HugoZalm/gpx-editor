@@ -1,0 +1,42 @@
+.projectname {
+    font-weight: bold;
+    font-size: large;
+}
+
+.file-list-item {
+    background-color: mintcream;
+    margin-bottom: 5px;
+    padding: 5px 10px;
+    border-radius: 5px;
+
+    div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.track-list-item {
+    background-color: lightgray;
+    margin: 0px 0px 5px 20px;
+    padding: 5px 10px;
+    border-radius: 5px;
+
+    div {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.color {
+  border-left: 8px solid var(--color);
+}
+
+.selected {
+    background-color: aqua;
+}
+
+.gap {
+    margin-right: 10px;
+}

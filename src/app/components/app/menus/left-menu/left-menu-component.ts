@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { IconButtonComponent } from "../../buttons/icon-button/icon-button-component";
-import { GpxStateService } from '../../../../services/gpx/state/gpx-state-service';
 import { MapService } from '../../../../services/map/map.service';
+import { MapStateService } from '../../../../services/map/map-state-service';
+import { ProjectStateService } from '../../../../services/project/state/project-state-service';
 
 @Component({
   selector: 'app-left-menu',
@@ -10,17 +11,26 @@ import { MapService } from '../../../../services/map/map.service';
   styleUrl: './left-menu-component.scss',
 })
 export class LeftMenuComponent {
-  public gpxStateService = inject(GpxStateService);
+  public projectStateService = inject(ProjectStateService);
+  public mapStateService = inject(MapStateService);
   private mapService = inject(MapService);
 
   handleAction(action: string) {
     // alert(action + '-button clicked');
     switch (action) {
       case 'clear-selection':
-        const id = this.gpxStateService.clearSelection();
+        const id = this.projectStateService.clearSelection();
         if (id) {
           this.mapService.toggleLayerSelection(id);
         }
+        break;
+      case 'edit':
+      case 'cut':
+      case 'combine':
+        this.mapService.setSelection(true);
+        break;
+      case 'close-selection':
+        this.mapService.setSelection(false);
         break;
     }
   }
