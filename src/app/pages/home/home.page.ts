@@ -34,17 +34,11 @@ import { HttpClient } from '@angular/common/http';
 export class HomePage implements OnInit {
   private mapService = inject(MapService);
   public stateService = inject(StateService);
-  private gpxStateService = inject(GpxStateService);
+  public gpxStateService = inject(GpxStateService);
   private http = inject(HttpClient);
 
   ngOnInit() {
     this.mapService.setCenterFromLonLat(4.47917, 51.9225, 14);
-    // this.http.get<any>('assets/data/firstproject.hzx')
-    //   .subscribe(data => {
-    //     console.log('FIRTSPROJECT', data)
-    //     this.gpxStateService.setProject(data);
-    //   });
-
   }
 
 }

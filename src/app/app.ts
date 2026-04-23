@@ -14,7 +14,7 @@ export class App {
 
   constructor() {
     this.translate.addLangs(['en', 'nl']);
-    this.translate.setFallbackLang('nl');
+    this.translate.setFallbackLang('en');
     this.translate.use('nl');
   }
 

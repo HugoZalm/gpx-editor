@@ -11,6 +11,7 @@ import { MenuButtonComponent } from '../../buttons/menu-button/menu-button-compo
 import { MatDialog } from '@angular/material/dialog';
 import { MetadataDialog } from '../../dialogs/metadata/metadata-dialog';
 import { GpxUtilsService } from '../../../../services/gpx/utils/gpx-utils-service';
+import { stopPropagation } from 'ol/events/Event';
 
 export interface FileItem {
   id: string;
@@ -67,7 +68,7 @@ export class RightPanelComponent {
         metadata: gpx.raw.metadata,
         tracks: this.getTracks(gpx.tracks),
         routes: this.getRoutes(gpx.routes),
-        waypoints: this.getWaypoints(gpx.waypoints),
+        waypoints: this.getWaypoints(gpx.waypoints) ?? [],
       } as FileItem;
     });
     console.log('FILES', files);
@@ -78,7 +79,8 @@ export class RightPanelComponent {
     this.gpxState.updateProjectName('TEST');
   }
 
-  select(type: string, value: FileItem | TrackItem): void {
+  select(event: Event, type: string, value: FileItem | TrackItem): void {
+    event.stopPropagation();
     const currentSelectedItemId = this.gpxState.getSelectedItem()?.id;
     if (currentSelectedItemId) {
       this.mapService.toggleLayerSelection(currentSelectedItemId);
@@ -123,6 +125,9 @@ export class RightPanelComponent {
   }
 
   private getTracks(tracks: HzxTrack[]): TrackItem[] {
+    if (!tracks) {
+      return [];
+    }
     const items = tracks.map((track) => {
       return {
         id: track.metadata.id,
@@ -135,6 +140,9 @@ export class RightPanelComponent {
   }
 
   private getRoutes(routes: HzxRoute[]): RouteItem[] {
+    if (!routes) {
+      return [];
+    }
     const items = routes.map((route) => {
       return {
         id: route.metadata.id,
@@ -147,6 +155,9 @@ export class RightPanelComponent {
   }
 
   private getWaypoints(waypoints: HzxWaypoint[]): WaypointItem[] {
+    if (!waypoints) {
+      return [];
+    }
     const items = waypoints.map((waypoint) => {
       return {
         id: waypoint.metadata.id,

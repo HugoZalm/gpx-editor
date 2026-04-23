@@ -10,7 +10,8 @@ import { faRoute, faLocationDot, faMap, faFileArrowDown } from '@fortawesome/fre
 type IconName1 = 'coffee' | 'user' | 'settings' | 'adminsettings' | 'delete' | 'unlink';
 type IconName2 = 'cut' | 'edit' | 'goto' | 'visible' | 'check' | 'code' | 'qr' | 'link' | 'plus';
 type IconName3 = 'map' | 'track' | 'poi' | 'import' | 'export';
-export type IconName = IconName1 | IconName2 | IconName3;
+type IconName4 = 'bookmark' | 'bookmark-of';
+export type IconName = IconName1 | IconName2 | IconName3; // | IconName4;
 export type SizeName = 'xs' | 'sm' | 'lg' | '1x' | '2x' | '10x';
 
 
@@ -46,7 +47,7 @@ export class HzIcon {
     track: faRoute,
     poi: faLocationDot,
     import: faFileArrowDown,
-    export: faFileArrowUp
+    export: faFileArrowUp,
   } as const;
 
   currentIcon = computed(() => {

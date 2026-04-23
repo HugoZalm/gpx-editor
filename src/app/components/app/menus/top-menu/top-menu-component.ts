@@ -1,5 +1,5 @@
 import { GpxParseService } from './../../../../services/gpx/parser/gpx-parse-service';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MenuButtonComponent } from '../../buttons/menu-button/menu-button-component';
@@ -10,16 +10,39 @@ import { GpxStateService } from '../../../../services/gpx/state/gpx-state-servic
 import { GpxUtilsService } from '../../../../services/gpx/utils/gpx-utils-service';
 import { MapService } from '../../../../services/map/map.service';
 import { HzxGpx } from '../../../../services/gpx/model/hzxProject';
-import testproject from '../../../../../assets/data/snackweekend.json';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { TranslatePipe, TranslateService, _ } from '@ngx-translate/core';
+
+export interface MenuItem {
+  id: string;
+  label: string;
+  buttons: MenuButton[];
+}
+
+export interface MenuButton {
+  label: string | undefined;
+  icon: string | undefined;
+  action: string;
+  tooltip: string | undefined;
+}
+
 
 @Component({
   selector: 'app-top-menu',
-  imports: [MatButtonModule, MatMenuModule, MenuButtonComponent],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatMenuModule,
+    MenuButtonComponent,
+    TranslatePipe,
+    TitleCasePipe
+  ],
   templateUrl: './top-menu-component.html',
   styleUrl: './top-menu-component.scss',
 })
 export class TopMenuComponent {
   readonly dialog = inject(MatDialog);
+  private translate = inject(TranslateService);
 
   private stateService = inject(StateService);
   private mapService = inject(MapService);
@@ -27,25 +50,36 @@ export class TopMenuComponent {
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
 
+  public menuItems = signal<MenuItem[]>([]);
+  // private translations: any = {};
+
+  constructor() {
+    this.createMenuItems();
+    // this.translate.get(_('menu')).subscribe({
+    //   next: (res) => {
+    //     // console.log('RES', res);
+    //     this.translations = res;
+    //   },
+    //   error: (err) => console.error('ERROR', err)
+    // });
+  }
+
   handleAction(action: string) {
     switch (action) {
-      case 'open-test-project':
-        this.openTestProject();
-        break;
-      case 'nieuw-project':
+      case 'new-project':
         break;
       case 'open-project':
         this.openImportDialog('hzx');
         break;
-      case 'bewaar-project':
+      case 'save-project':
         this.saveProject();
         break;
-      case 'nieuwe-file':
+      case 'new-file':
         break;
       case 'open-file':
         this.openImportDialog('gpx');
         break;
-      case 'bewaar-file':
+      case 'save-file':
         // this.saveCurrentFile();
         break;
       case 'toggle-tree':
@@ -102,17 +136,57 @@ export class TopMenuComponent {
     });
   }
 
-  private openTestProject() {
-    const result = JSON.stringify(testproject);
-    const gpx = this.gpxParseService.parse(result);
-    if (gpx) {
-      const id = this.gpxStateService.addFile(gpx);
-      const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
-      this.mapService.createVectorLayers(features);
-      this.mapService.addMissingVectorLayers();
-      if (id) {
-        this.gpxStateService.setSelectedItem('gpx', id);
-      }
-    }
+  private createMenuItems() {
+    const items: MenuItem[] = [];
+    items.push({ 
+      id: 'project', 
+      label: 'menu.project',
+      buttons: [
+        this.createButton('new-project', 'menu.newproject', 'folder-plus', 'menu.newproject.tooltip'),
+        this.createButton('open-project', 'menu.openproject', 'folder-up', 'menu.openproject.tooltip'),
+        this.createButton('save-project', 'menu.saveproject', 'folder-down', 'menu.saveproject.tooltip'),
+        this.createButton('export-project', 'menu.exportproject', 'folder-down', 'menu.exportproject.tooltip'),
+        this.createButton('hr'),
+        this.createButton('new-file', 'menu.newfile', 'folder-plus', 'menu.newfile.tooltip'),
+        this.createButton('open-file', 'menu.importfile', 'folder-up', 'menu.importfile.tooltip'),
+      ]
+    });
+    items.push({ 
+      id: 'manage', 
+      label: 'menu.manage',
+      buttons: []
+    });
+    items.push({ 
+      id: 'display', 
+      label: 'menu.display',
+      buttons: [
+        this.createButton('toggle-tree', 'menu.display.treepanel', 'tree', 'menu.display.treepanel.tooltip'),
+        this.createButton('toggle-info', 'menu.display.infopanel', 'chart', 'menu.display.treepanel.tooltip'),
+      ]
+    });
+    items.push({ 
+      id: 'settings', 
+      label: 'menu.settings',
+      buttons: [
+        this.createButton('language', 'menu.settings.layers', 'language', 'menu.settings.layers.tooltip'),
+        this.createButton('hr'),
+        this.createButton('map-layers', 'menu.settings.layers', 'layers', 'menu.settings.layers.tooltip'),
+      ]
+    });
+    items.push({ 
+      id: 'help', 
+      label: 'menu.help',
+      buttons: [
+        this.createButton('documentation', 'menu.help.documentation', 'documentation', 'menu.help.documentation.tooltip'),
+        this.createButton('about', 'menu.help.about', 'about', 'menu.help.about.tooltip'),
+
+      ]
+    });
+    this.menuItems.set(items);
   }
+
+  private createButton(action: string, label?: string, icon?: string, tooltip?: string) {
+    return { label, icon, action, tooltip };
+  }
+
 }

@@ -1,6 +1,6 @@
 .container {
     position: absolute;
-    left: 10px;
+    left: 0px;
     top: 150px;
     pointer-events: auto;
 }
@@ -8,11 +8,11 @@
 .menu {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 0px;
 
     background-color: white;
     border-radius: 5px;
-    padding: 10px;
+    padding: 0px;
 }
 
 hz-icon {

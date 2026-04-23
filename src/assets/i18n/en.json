@@ -1,0 +1,55 @@
+{
+    "menu": {
+        "files": "Files",
+        "newproject": "New Project",
+        "openproject": "Open Project",
+        "saveproject": "Save Project",
+        "exportproject": "Export Project",
+        "newfile": "New File",
+        "importfile": "Open File",
+        "savefile": "Save File",
+        "exportfile": "Export File",
+        "manage": "Manage",
+        "display": "Display",
+        "settings": "Settings",
+        "help": "Help",
+        "login": "login",
+        "logout": "logout"
+    },
+    "dialog": {
+        "save": "save",
+        "cancel": "cancel",
+        "link": "link",
+        "import": "",
+        "importinfo": ""
+    },
+    "errors": {
+        "Failed to load": "'Failed to load'",
+        "You are already registered to this mapcode.": "You are already registered to this mapcode.",
+        "This mapcode is already assigned to another user.": "This mapcode is already assigned to another user.",
+        "Mapcode not found": "Mapcode not found.",
+        "Map not found for mapcode": "Map not found for mapcode.",
+        "No user is currently assigned to this mapcode.": "No user is currently assigned to this mapcode.",
+        "This mapcode is assigned to a different user — you cannot remove it.": "This mapcode is assigned to a different user — you cannot remove it.",
+        "Amount must be between 1 and 10000": "Amount must be between 1 and 10000."
+    },
+     "metadata": {
+        "edit": "",
+        "name": "name",
+        "color": "color"
+    },
+    "track": {
+        "name": "name",
+        "description": "description",
+        "geom": "geometry",
+        "create": "create track",
+        "manage": "manage track"
+    },
+    "waypoint": {
+        "name": "name",
+        "description": "description",
+        "geom": "geometry",
+        "create": "create point",
+        "manage": "manage point"
+    }
+}

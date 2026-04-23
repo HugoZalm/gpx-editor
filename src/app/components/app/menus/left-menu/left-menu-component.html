@@ -1,11 +1,11 @@
 <div class="container">
     <div class="menu">
-        <!-- <button matIconButton
-                click="edit()"
-                [matTooltip]="'test'"
-        >
-            <svg lucidePencil></svg>
-        </button> -->
+        @if (gpxStateService.hasSelection()) {
+            <app-icon-button [icon]="'clear-selection'" action="clear-selection" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'select'" action="select" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
+        }
         <app-icon-button [icon]="'pencil'" action="'edit'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
         <app-icon-button [icon]="'scissors'" action="'cut'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
         <app-icon-button [icon]="'poi'" action="'poi'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>

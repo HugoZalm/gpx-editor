@@ -1,4 +1,4 @@
-import { effect, inject, Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import olMap from "ol/Map";
 import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
@@ -9,27 +9,20 @@ import { Coordinate, createStringXY } from "ol/coordinate";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { getPointResolution } from "ol/proj.js";
-import { Circle, Fill, Stroke, Style } from "ol/style";
+import { Stroke, Style } from "ol/style";
 import XYZ from "ol/source/XYZ";
 import WKT from "ol/format/WKT";
-// import { AuthService } from "../../services/auth.service";
-// import { ApiService } from "../../services/api.service";
 import {createEmpty, extend, Extent, getCenter} from 'ol/extent';
-import { ResolutionLike } from "ol/resolution";
-import Feature from "ol/Feature";
-import { Layer } from "ol/layer";
 import { HzxFeature } from "../gpx/model/hzxProject";
 import { MapStateService } from "./map-state-service";
 import { defaults as defaultInteractions } from 'ol/interaction';
+import Select from 'ol/interaction/Select.js';
+import MapBrowserEvent from "ol/MapBrowserEvent";
+
 
 // define your custom properties
-type TrackProperties = {
-  typeId?: 'styleId';
-};
-
-// // optional: typed feature
-// type MyFeature = Feature & {
-//   get(key: keyof MyFeatureProps): MyFeatureProps[keyof MyFeatureProps];
+// type TrackProperties = {
+//   typeId?: 'styleId';
 // };
 
 
@@ -42,6 +35,7 @@ export class MapService {
 
   private currentView!: View;
   private map!: olMap;
+  private select!: Select;
 
   constructor() {
     this.createMap();
@@ -49,7 +43,7 @@ export class MapService {
     // this.addBaseLayers();
     // this.addBaseLayer('opentopo');
     this.addBaseLayer('osm');
-    this.addListeners();
+    // this.addListeners();
   }
 
   private createBaseLayers() {
@@ -58,7 +52,16 @@ export class MapService {
   }
 
   private addListeners() {
+    this.select = new Select();
+    this.map.addInteraction(this.select);
     this.map.on("moveend", () => this.onMoveEnd());
+    this.map.on('singleclick', (event) => this.onSelect(event));
+  }
+      
+  private onSelect(event: MapBrowserEvent<PointerEvent | KeyboardEvent | WheelEvent>) {
+    const feature = this.select.getFeatures().item(0);
+    if (!feature) return;
+    console.log('CLICKED on feature', feature);
   }
 
   private onMoveEnd() {}
@@ -281,26 +284,5 @@ export class MapService {
     }
     return scale;
   }
-
-  
-  // private getTrackStyle (typeId: number) {
-  //   const color =
-  //     typeId === 1 ? 'red' :
-  //     typeId === 2 ? 'blue' :
-  //     typeId === 3 ? 'green' :
-  //     'gray';
-
-  //   return new Style({
-  //     // fill: new Fill({ color }),
-  //     stroke: new Stroke({
-  //       color: color,
-  //       width: 3,
-  //     }),
-  //     // image: new CircleStyle({
-  //     //   radius: 6,
-  //     //   fill: new Fill({ color }),
-  //     // }),
-  //   });
-  // };
 
 }

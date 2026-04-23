@@ -1,25 +1,25 @@
-<div class="container">
+<!-- <div class="container">
     <div class="menu">
         <button matButton>GPX editor</button>
-        <button matButton [matMenuTriggerFor]="bestand">Bestand</button>
-        <button matButton [matMenuTriggerFor]="bewerken">Bewerken</button>
-        <button matButton [matMenuTriggerFor]="weergave">Weergave</button>
-        <button matButton [matMenuTriggerFor]="instellingen">Instellingen</button>
-        <button matButton [matMenuTriggerFor]="help">Help</button>
+        <button matButton [matMenuTriggerFor]="bestand">{{ 'menu.bestand' | translate | titlecase }}</button>
+        <button matButton [matMenuTriggerFor]="bewerken">{{ 'menu.bewerken' | translate | titlecase }}</button>
+        <button matButton [matMenuTriggerFor]="weergave">{{ 'menu.weergave' | translate | titlecase }}</button>
+        <button matButton [matMenuTriggerFor]="instellingen">{{ 'menu.instellingen' | translate | titlecase }}</button>
+        <button matButton [matMenuTriggerFor]="help">{{ 'menu.help' | translate | titlecase }}</button>
     </div>
 </div>
 
 <mat-menu #bestand="matMenu">
     <div class="sub-menu">
-        <app-menu-button [label]="'Open Test project'" [icon]="'folder-up'" [action]="'open-test-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.newproject' | translate | titlecase }}" [icon]="'folder-plus'" [action]="'nieuw-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.openproject' | translate | titlecase }}" [icon]="'folder-up'" [action]="'open-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.saveproject' | translate | titlecase }}" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.exportproject' | translate | titlecase }}" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
         <hr>
-        <app-menu-button [label]="'Nieuw project'" [icon]="'folder-plus'" [action]="'nieuw-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Open project'" [icon]="'folder-up'" [action]="'open-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Bewaar project'" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <hr>
-        <app-menu-button [label]="'Nieuwe file'" [icon]="'file-plus'" [action]="'nieuwe-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Open file'" [icon]="'file-up'" [action]="'open-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Bewaar file'" [icon]="'file-down'" [action]="'bewaar-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.newfile' | translate | titlecase }}" [icon]="'file-plus'" [action]="'nieuwe-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.openfile' | translate | titlecase }}" [icon]="'file-up'" [action]="'open-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.savefile' | translate | titlecase }}" [icon]="'file-down'" [action]="'bewaar-file'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.exportfile' | translate | titlecase }}" [icon]="'folder-down'" [action]="'bewaar-project'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
     </div>
 </mat-menu>
 
@@ -30,8 +30,8 @@
 
 <mat-menu #weergave="matMenu">
     <div class="sub-menu">
-        <app-menu-button [label]="'Tree'" [icon]="'tree'" [action]="'toggle-tree'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
-        <app-menu-button [label]="'Info'" [icon]="'chart'" [action]="'toggle-info'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.tree' | translate | titlecase }}" [icon]="'tree'" [action]="'toggle-tree'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
+        <app-menu-button [label]="{{ 'menu.info' | translate | titlecase }}" [icon]="'chart'" [action]="'toggle-info'" (onAction)="handleAction($event)" [tooltip]="''"></app-menu-button>
     </div>
 </mat-menu>
 
@@ -43,4 +43,29 @@
 <mat-menu #help="matMenu">
     <div class="sub-menu">
     </div>
-</mat-menu>
+</mat-menu> -->
+
+
+
+<div class="container">
+    <div class="menu">
+        <button matButton>GPX editor</button>
+
+        @for (item of menuItems(); track item) {
+            <button matButton [matMenuTriggerFor]="menu">{{ item.label | translate | titlecase }}</button>
+
+            <mat-menu #menu="matMenu">
+                <div class="sub-menu">
+                    @for (button of item.buttons; track button) {
+                        @if (button.action === 'hr') {
+                            <hr>
+                        }
+                        @else {
+                            <app-menu-button [label]="button.label" [icon]="button.icon" [action]="button.action" (onAction)="handleAction($event)" [tooltip]="button.tooltip"></app-menu-button>
+                        }
+                    }
+                </div>
+            </mat-menu>
+        }
+    </div>
+</div>

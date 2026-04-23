@@ -195,6 +195,16 @@ export class GpxStateService {
     }
   }
 
+  hasSelection(): boolean {
+    return this.selectedItem() !== undefined;
+  }
+
+  clearSelection(): string | undefined {
+    const id = this.selectedItem()?.id;
+    this.selectedItem.set(undefined);
+    return id;
+  }
+
   /* Index */
   rebuildIndex(): void {
     this.index = new Map<string, HzxItem>();

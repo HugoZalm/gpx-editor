@@ -1,18 +1,18 @@
 <h2 mat-dialog-title>
-  {{ 'map.import' | translate | titlecase }}
+  {{ 'dialog.import' | translate | titlecase }}
 </h2>
 
 <mat-dialog-content>
   @if (error()) {
-    <div class="alert alert-error">{{ error() }}</div>
+    <div class="alert alert-error">{{ error() | translate | titlecase }}</div>
   }
 
   @if (success()) {
-    <div class="alert alert-success">{{ success() }}</div>
+    <div class="alert alert-success">{{ success() | translate | titlecase }}</div>
   }
 
   @if (form !== undefined) {
-    <label>{{ 'map.importinfo' | translate | titlecase }}</label>
+    <label>{{ 'dialog.importinfo' | translate | titlecase }}</label>
     <hz-form-file-input 
       [multiple]="false"
       accept="extentions()"

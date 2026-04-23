@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { LucideBike, LucideChartArea, LucideFile, LucideFileDown, LucideFilePlus, LucideFileUp, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePencil, LucidePlus, LucideScissors } from '@lucide/angular';
+import { LucideBike, LucideBookmark, LucideChartArea, LucideFile, LucideFileDown, LucideFilePlus, LucideFileUp, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePencil, LucidePlus, LucideScissors, LucideSquareDashedMousePointer, LucideSquareMousePointer } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -57,6 +57,10 @@ export class IconButtonComponent {
         return LucideChartArea;
       case 'pencil':
         return LucidePencil;
+      case 'select': 
+        return LucideSquareMousePointer;
+      case 'clear-selection': 
+        return LucideSquareDashedMousePointer;
       case 'bike':
       default:
         return LucideBike;
