@@ -61,6 +61,14 @@ export class ProjectService {
     return this.projectStateService.addFile(gpx);
   }
 
+  removeFileFromProject(fileId: string) {
+    return this.projectStateService.removeFile(fileId);
+  }
+
+  getTrackIdsFromFile(fileId: string): string[] {
+    return this.projectStateService.getTrackIdsFromFile(fileId);
+  }
+
   addNewTrackToFile(fileId: string) {
     const newTrack: HzxTrack = {
       metadata: { id: crypto.randomUUID(), name: 'new track', color: this.utilsService.getRandomColor()},

@@ -66,6 +66,10 @@ export class MapService {
     this.vectorLayerService.removeAllVectorLayers();
   }
 
+  removeVectorLayers(layerIds: string[]) {
+    this.vectorLayerService.removeVectorLayers(layerIds);
+  }
+
   removeVectorLayer(id: string) {
     this.vectorLayerService.removeVectorLayer(id);
   }

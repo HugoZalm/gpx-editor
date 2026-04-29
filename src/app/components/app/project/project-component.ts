@@ -4,50 +4,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MenuButtonComponent } from '../buttons/menu-button/menu-button-component';
-import { GpxUtilsService } from '../../../services/gpx/utils/gpx-utils-service';
-import { MapService } from '../../../services/map/map.service';
-import { HzxTrack, HzxRoute, HzxWaypoint, HzxItem } from '../../../services/project/model/hzxProject';
-import { ProjectService } from '../../../services/project/project-service';
+import { HzxItem } from '../../../services/project/model/hzxProject';
 import { PanelTypes, UiStateService } from '../../../services/ui/ui-state-service';
 import { ImportDialog } from '../dialogs/import/import-dialog';
 import { MetadataDialog, MetadataDialogData } from '../dialogs/metadata/metadata-dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { MetaData } from '@we-gold/gpxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { CoreService } from '../../../services/core-service';
 import { ProjectStateService } from '../../../services/project/state/project-state-service';
 import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
-
-// export interface FileItem {
-//   id: string;
-//   name: string;
-//   color: string;
-//   metadata: MetaData;
-//   tracks: TrackItem[];
-//   routes: RouteItem[];
-//   waypoints: WaypointItem[];
-// }
-
-// export interface TrackItem {
-//   id: string;
-//   name: string;
-//   color: string;
-//   track: HzxTrack;
-// }
-
-// export interface RouteItem {
-//   id: string;
-//   name: string;
-//   color: string;
-//   route: HzxRoute;
-// }
-
-// export interface WaypointItem {
-//   id: string;
-//   name: string;
-//   color: string;
-//   waypoint: HzxWaypoint;
-// }
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
@@ -58,7 +24,8 @@ import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
     MatButtonModule,
     MatMenuModule,
     MenuButtonComponent,
-    TranslatePipe
+    TranslatePipe,
+    MatTooltipModule
   ],
   templateUrl: './project-component.html',
   styleUrl: './project-component.scss',
@@ -71,7 +38,6 @@ export class ProjectComponent {
   public projectStateService = inject(ProjectStateService);
 
 
-  // public project = this.projectStateService.project();
   private clickedItem: HzxItem | undefined = undefined;
 
   select(event: Event, item?: HzxItem): void {
@@ -84,6 +50,7 @@ export class ProjectComponent {
   }
 
   handleAction(action: string) {
+    let fileId;
     switch (action) {
       case 'toggle-panel':
         this.uiStateService.togglePanel(PanelTypes.RIGHT);
@@ -118,14 +85,17 @@ export class ProjectComponent {
       case 'export-file':
         this.openWipDialog();
         break;
-      case 'copy-file':
+      case 'duplicate-file':
         this.openWipDialog();
         break;
       case 'delete-file':
-        this.openWipDialog();
+        fileId = this.clickedItem?.metadata.id;
+        if (fileId) {
+          this.coreService.removeFileFromProject(fileId);
+        }
         break;
       case 'new-track':
-        const fileId = this.clickedItem?.metadata.id;
+        fileId = this.clickedItem?.metadata.id;
         if (fileId) {
           this.coreService.addNewTrackToFile(fileId);
         }

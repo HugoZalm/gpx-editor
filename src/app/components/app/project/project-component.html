@@ -2,6 +2,7 @@
   class="projectname"
   [matContextMenuTriggerFor]="projectMenu"
   (contextmenu)="select($event, projectStateService.project())"
+  [matTooltip]="'menu.rightclick.tooltip' | translate"
 >
   <div>
     <span class="gap">{{ 'project' | translate | titlecase}}:</span>
@@ -38,7 +39,7 @@
   <div class="sub-menu">
     <app-menu-button
       [label]="'menu.editproject'"
-      [icon]="'folder-pen'"
+      [icon]="'pencil'"
       [action]="'edit-project'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.editproject.tooltip'"
@@ -94,7 +95,7 @@
   <div class="sub-menu">
     <app-menu-button
       [label]="'menu.editfile'"
-      [icon]="'file-edit'"
+      [icon]="'pencil'"
       [action]="'edit-file'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.editfile.tooltip'"
@@ -114,11 +115,11 @@
       [tooltip]="'menu.exportfile.tooltip'"
     ></app-menu-button>
     <app-menu-button
-      [label]="'menu.copyfile'"
+      [label]="'menu.duplicatefile'"
       [icon]="'file-copy'"
-      [action]="'copy-file'"
+      [action]="'duplicate-file'"
       (onAction)="handleAction($event)"
-      [tooltip]="'menu.copyfile.tooltip'"
+      [tooltip]="'menu.duplicatefile.tooltip'"
     ></app-menu-button>
     <app-menu-button
       [label]="'menu.deletefile'"
@@ -149,11 +150,11 @@
     ></app-menu-button>
     <hr />
     <app-menu-button
-      [label]="'menu.duplicatetrack'"
+      [label]="'menu.copytrack'"
       [icon]="'copy'"
       [action]="'copy-track'"
       (onAction)="handleAction($event)"
-      [tooltip]="'menu.duplicatetrack.tooltip'"
+      [tooltip]="'menu.copytrack.tooltip'"
     ></app-menu-button>
     <app-menu-button
       [label]="'menu.deletetrack'"

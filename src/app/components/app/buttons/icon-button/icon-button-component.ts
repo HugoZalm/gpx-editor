@@ -1,20 +1,24 @@
-import { Component, computed, input, output } from '@angular/core';
+import { Component, computed, inject, input, output } from '@angular/core';
 import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslatePipe } from '@ngx-translate/core';
+
 
 @Component({
   selector: 'app-icon-button',
   imports: [
     LucideDynamicIcon,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    TranslatePipe
   ],
   templateUrl: './icon-button-component.html',
   styleUrl: './icon-button-component.scss',
 })
 export class IconButtonComponent {
+  
   icon = input<string>();
   action = input<string>();
   tooltip = input<string>();

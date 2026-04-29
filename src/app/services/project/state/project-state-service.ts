@@ -193,6 +193,16 @@ export class ProjectStateService {
     return tracks;
   }
 
+  getTrackIdsFromFile(fileId: string) {
+   const trackIds: string[] = [];
+    this.getProject().files.forEach(file => {
+      if (file.metadata.id === fileId) {
+        file.tracks.forEach(track => trackIds.push(track.metadata.id));
+      }
+    })
+    return trackIds;
+  }
+
   addTrack(fileId: string, track: HzxTrack): void {
     this.project.update((project) => {
       const files = project.files.map((file) => {

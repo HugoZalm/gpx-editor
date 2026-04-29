@@ -54,12 +54,19 @@ export class CoreService {
     }
   }
 
+  removeFileFromProject(fileId: string) {
+    const trackIds = this.projectService.getTrackIdsFromFile(fileId);
+    this.mapService.removeVectorLayers(trackIds);
+    this.projectService.removeFileFromProject(fileId);
+  }
+
   addNewTrackToFile(fileId: string) {
     this.projectService.addNewTrackToFile(fileId);
   }
 
   removeTrackFromFile(trackId: string) {
     this.projectService.removeTrackFromFile(trackId);
+    this.mapService.removeVectorLayer(trackId);
   }
 
   moveTrackToFile(fileId: string, trackId: string) {
@@ -68,12 +75,6 @@ export class CoreService {
     //   const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
     //   this.mapService.createVectorLayers(features);
     // }
-  }
-
-  removeFileFromProject(id: string) {
-    // const trackIds = this.projectService.getTrackIdsFromFile(id);
-    // this.mapService.removeVectorLayers(trackIds);
-    // this.projectService.removeFile(id);
   }
 
   editMetadata(metadata: HzxMetaData) {
