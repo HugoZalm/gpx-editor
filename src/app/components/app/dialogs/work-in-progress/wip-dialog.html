@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>
+  {{ 'dialog.workinprogress' | translate | titlecase }}
+</h2>
+
+<mat-dialog-content>
+  <img src="images/reparatie-fiets-aan-tafel.jpg" width="100%"/>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton (click)="close()">{{ 'dialog.close' | translate | titlecase }}</button>
+</mat-dialog-actions>

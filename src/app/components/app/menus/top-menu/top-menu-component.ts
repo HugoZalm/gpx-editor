@@ -69,7 +69,7 @@ export class TopMenuComponent {
         this.openImportDialog('hzx');
         break;
       case 'save-project':
-        this.projectService.saveProject();
+        // this.projectService.saveProject();
         // this.saveProject();
         break;
       case 'new-file':
@@ -94,10 +94,10 @@ export class TopMenuComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined) {
         if (type === 'gpx') {
-          this.projectService.importProject(result);
+          // this.projectService.importProject(result);
         }
         if (type === 'hzx') {
-          this.projectService.importFile(result);
+          // this.projectService.importFile(result);
         }
       }
     });

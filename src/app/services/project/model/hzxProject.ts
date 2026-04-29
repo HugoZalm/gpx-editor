@@ -40,3 +40,18 @@ export interface HzxFeature {
   metadata: HzxMetaData;
   feature: Feature;
 }
+
+export type HzxItem = HzxProject | HzxGpx | HzxTrack | HzxRoute | HzxWaypoint;
+
+export interface ItemInfo { 
+  type: string;
+  id: string;
+  parentId: string | undefined;
+  // index: { file: number, item?: number };
+  item: HzxItem;
+}
+
+export interface SelectedItem {
+  type: string;
+  id: string;
+}

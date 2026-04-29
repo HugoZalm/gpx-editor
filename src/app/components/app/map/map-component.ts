@@ -27,12 +27,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   constructor() {}
 
   ngAfterViewInit(): void {
-    // 🔗 Attach existing map to the DOM
+    // Injecting MapService creates the map. Now: attach it to the DOM.
     this.mapService.setTarget(this.mapContainer.nativeElement);
   }
 
   ngOnDestroy(): void {
-    // 🧹 Detach map when component is destroyed
+    // Detach map when component is destroyed
     this.mapService.clearTarget();
   }
 

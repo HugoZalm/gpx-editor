@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { IconButtonComponent } from "../../buttons/icon-button/icon-button-component";
 import { MapService } from '../../../../services/map/map.service';
-import { MapStateService } from '../../../../services/map/map-state-service';
+import { MapStateService } from '../../../../services/map/state/map-state-service';
 import { ProjectStateService } from '../../../../services/project/state/project-state-service';
+import { HzxTrack } from '../../../../services/project/model/hzxProject';
+import { CoreService } from '../../../../services/core-service';
 
 @Component({
   selector: 'app-left-menu',
@@ -11,26 +13,33 @@ import { ProjectStateService } from '../../../../services/project/state/project-
   styleUrl: './left-menu-component.scss',
 })
 export class LeftMenuComponent {
-  public projectStateService = inject(ProjectStateService);
-  public mapStateService = inject(MapStateService);
-  private mapService = inject(MapService);
+  // public projectStateService = inject(ProjectStateService);
+  // public mapStateService = inject(MapStateService);
+  // private mapService = inject(MapService);
+  private coreService = inject(CoreService);
 
   handleAction(action: string) {
     // alert(action + '-button clicked');
+    let id;
     switch (action) {
       case 'clear-selection':
-        const id = this.projectStateService.clearSelection();
+          // id = this.coreService.setSelection(undefined);
         if (id) {
-          this.mapService.toggleLayerSelection(id);
+          // this.coreService.setSelection(id);
         }
         break;
       case 'edit':
-      case 'cut':
       case 'combine':
-        this.mapService.setSelection(true);
+        // this.mapService.setSelection(true);
+        break;
+      case 'cut':
+        // id = this.coreService.getSelectedItem();
+        if(id) {
+          // this.mapService.setSplitter(id);
+        }
         break;
       case 'close-selection':
-        this.mapService.setSelection(false);
+        // this.mapService.setSelection(false);
         break;
     }
   }

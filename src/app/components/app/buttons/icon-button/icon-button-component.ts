@@ -1,5 +1,5 @@
 import { Component, computed, input, output } from '@angular/core';
-import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePlus, LucideFileUp, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideX } from '@lucide/angular';
+import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -34,6 +34,7 @@ export class IconButtonComponent {
       case 'folder-open':
         return LucideFolderOpen;
       case 'add':
+      case 'plus':
         return LucidePlus;
       case 'folder':
         return LucideFolder;
@@ -45,6 +46,8 @@ export class IconButtonComponent {
         return LucideFolderDown;
       case 'folder-output':
         return LucideFolderOutput;
+      case 'folder-edit':
+        return LucideFolderPen;
       case 'file':
         return LucideFile;
       case 'file-plus':
@@ -55,6 +58,12 @@ export class IconButtonComponent {
         return LucideFileDown;
       case 'file-output':
         return LucideFileOutput;
+      case 'file-edit':
+        return LucideFilePen;
+      case 'file-copy':
+        return LucideFiles;
+      case 'file-delete':
+        return LucideFileX;
       case 'tree':
         return LucideFolderTree;
       case 'chart':
@@ -62,6 +71,7 @@ export class IconButtonComponent {
         return LucideChartArea;
       case 'chart-no-axes-combined':
         return LucideChartArea;
+      case 'edit':
       case 'pencil':
         return LucidePencil;
       case 'select': 
@@ -77,6 +87,10 @@ export class IconButtonComponent {
       case 'delete':
       case 'trash':
         return LucideTrash;
+      case 'upload':
+        return LucideUpload;
+      case 'download':
+        return LucideDownload;
       case 'panel-bottom-open':
         return LucidePanelBottomOpen;
       case 'panel-bottom-close':

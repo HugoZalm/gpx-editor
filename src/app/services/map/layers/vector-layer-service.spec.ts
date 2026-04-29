@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ProjectStateService } from './project-state-service';
+import { VectorLayerService } from './vector-layer-service';
 
-describe('GpxStateService', () => {
-  let service: ProjectStateService;
+describe('VectorLayerService', () => {
+  let service: VectorLayerService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ProjectStateService);
+    service = TestBed.inject(VectorLayerService);
   });
 
   it('should be created', () => {

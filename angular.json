@@ -31,6 +31,7 @@
             ],
             "styles": [
               "node_modules/ol/ol.css",
+              "node_modules/ol-ext/dist/ol-ext.css",
               "src/styles.scss"
             ]
           },

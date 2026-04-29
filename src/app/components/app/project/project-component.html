@@ -1,33 +1,33 @@
 <div
   class="projectname"
   [matContextMenuTriggerFor]="projectMenu"
-  (contextmenu)="select($event, 'project')"
+  (contextmenu)="select($event, projectStateService.project())"
 >
   <div>
     <span class="gap">{{ 'project' | translate | titlecase}}:</span>
-    <span>{{ projectMetadata().name }}</span>
+    <span>{{ projectStateService.project().metadata.name }}</span>
   </div>
 </div>
 
 <mat-list>
-  @for (file of projectFiles(); track file) {
+  @for (file of projectStateService.project().files; track file) {
     <div
       class="file-list-item"
       [matContextMenuTriggerFor]="fileMenu"
-      (contextmenu)="select($event, 'file', file)"
+      (contextmenu)="select($event, file)"
     >
-      <div>{{ file.name }}</div>
+      <div>{{ file.metadata.name }}</div>
 
       @for (track of file.tracks; track track) {
         <div
           class="track-list-item color"
-          [style.--color]="track.color"
-          [ngClass]="{ selected: isSelected(track.id) }"
-          (click)="select($event, 'track', track)"
+          [style.--color]="track.metadata.color"
+          [ngClass]="{ selected: isSelected(track.metadata.id) }"
+          (click)="select($event)"
           [matContextMenuTriggerFor]="trackMenu"
-          (contextmenu)="select($event, 'track', track)"
+          (contextmenu)="select($event, track)"
         >
-          <div>{{ track.name }}</div>
+          <div>{{ track.metadata.name }}</div>
         </div>
       }
     </div>
@@ -38,7 +38,7 @@
   <div class="sub-menu">
     <app-menu-button
       [label]="'menu.editproject'"
-      [icon]="'pencil'"
+      [icon]="'folder-pen'"
       [action]="'edit-project'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.editproject.tooltip'"
@@ -72,6 +72,21 @@
       (onAction)="handleAction($event)"
       [tooltip]="'menu.exportproject.tooltip'"
     ></app-menu-button>
+    <hr />
+    <app-menu-button
+      [label]="'menu.newfile'"
+      [icon]="'file-plus'"
+      [action]="'new-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.newfile.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.openfile'"
+      [icon]="'file-up'"
+      [action]="'open-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.openfile.tooltip'"
+    ></app-menu-button>
   </div>
 </mat-menu>
 
@@ -79,10 +94,46 @@
   <div class="sub-menu">
     <app-menu-button
       [label]="'menu.editfile'"
-      [icon]="'pencil'"
+      [icon]="'file-edit'"
       [action]="'edit-file'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.editfile.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.savefile'"
+      [icon]="'file-down'"
+      [action]="'save-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.savefile.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.exportfile'"
+      [icon]="'file-output'"
+      [action]="'export-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.exportfile.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.copyfile'"
+      [icon]="'file-copy'"
+      [action]="'copy-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.copyfile.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.deletefile'"
+      [icon]="'file-delete'"
+      [action]="'delete-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.deletefile.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
+      [label]="'menu.newtrack'"
+      [icon]="'add'"
+      [action]="'new-track'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.newtrack.tooltip'"
     ></app-menu-button>
   </div>
 </mat-menu>
