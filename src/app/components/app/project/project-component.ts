@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MenuButtonComponent } from '../buttons/menu-button/menu-button-component';
-import { HzxItem } from '../../../services/project/model/hzxProject';
+import { HzxItem, HzxTrack } from '../../../services/project/model/hzxProject';
 import { PanelTypes, UiStateService } from '../../../services/ui/ui-state-service';
 import { ImportDialog } from '../dialogs/import/import-dialog';
 import { MetadataDialog, MetadataDialogData } from '../dialogs/metadata/metadata-dialog';
@@ -40,7 +40,12 @@ export class ProjectComponent {
 
   private clickedItem: HzxItem | undefined = undefined;
 
-  select(event: Event, item?: HzxItem): void {
+  selectTrack(event: Event, item: HzxTrack): void {
+    event.stopPropagation();
+    this.coreService.toggleSelection(item);
+  }
+
+  selectForAction(event: Event, item?: HzxItem): void {
     event.stopPropagation();
     this.clickedItem = item;
   }

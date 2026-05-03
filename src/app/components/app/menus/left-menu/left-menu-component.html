@@ -1,20 +1,32 @@
 <div class="container">
     <div class="menu">
-        <!-- @if (projectStateService.hasSelection()) { -->
-            <app-icon-button [icon]="'clear-selection'" [action]="'clear-selection'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
-        <!-- } -->
-        <!-- @else { -->
-            <!-- <app-icon-button [icon]="'select'" [action]="'select'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button> -->
-        <!-- } -->
+        @if (coreService.hasSelection()) {
+            <app-icon-button [icon]="'clear-selection'" [action]="'clear-selection'" (onAction)="handleAction($event)" [tooltip]="'menu.clearselection.tooltip'"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'select'" [action]="'select'" (onAction)="handleAction($event)" [tooltip]="'menu.select'"></app-icon-button>
+        }
 
-        <!-- @if (mapStateService.hasSelectInteraction()) { -->
-            <app-icon-button [icon]="'close'" [action]="'close-selection'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
-        <!-- } -->
-        <!-- @else { -->
-            <app-icon-button [icon]="'pencil'" [action]="'edit'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
-            <app-icon-button [icon]="'scissors'" [action]="'cut'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
-            <app-icon-button [icon]="'combine'" [action]="'combine'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
-        <!-- } -->
+        @if (coreService.isState(coreService.interactionStates.SELECTION)) {
+            <app-icon-button [icon]="'close'" [action]="'close-selection'" (onAction)="handleAction($event)" [tooltip]="'menu.close.tooltip'"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'pencil'" [action]="'edit'" (onAction)="handleAction($event)" [tooltip]="'menu.select'"></app-icon-button>
+        }
+
+        @if (coreService.isState(coreService.interactionStates.SPLITTER)) {
+            <app-icon-button [icon]="'close'" [action]="'close-selection'" (onAction)="handleAction($event)" [tooltip]="'menu.close.tooltip'"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'scissors'" [action]="'cut'" (onAction)="handleAction($event)" [tooltip]="'menu.split'"></app-icon-button>
+        }
+
+        @if (coreService.isState(coreService.interactionStates.COMBINER)) {
+            <app-icon-button [icon]="'close'" [action]="'close-selection'" (onAction)="handleAction($event)" [tooltip]="'menu.close.tooltip'"></app-icon-button>
+        }
+        @else {
+            <app-icon-button [icon]="'combine'" [action]="'combine'" (onAction)="handleAction($event)" [tooltip]="'menu.combine'"></app-icon-button>
+        }
 
         <app-icon-button [icon]="'poi'" [action]="'poi'" (onAction)="handleAction($event)" [tooltip]="''"></app-icon-button>
     </div>

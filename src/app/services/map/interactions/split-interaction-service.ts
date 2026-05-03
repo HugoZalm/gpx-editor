@@ -15,7 +15,7 @@ export class SplitInteractionService {
   private split = new Split();
 
   public addSplitter(id: string): void {
-    const source = this.mapState.getVectorLayer(id)?.getSource();
+    const source = this.mapState.vectorLayers().get(id)?.getSource();
     if (source) {
       this.split = new Split({
         source: source

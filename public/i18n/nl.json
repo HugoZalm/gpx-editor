@@ -65,7 +65,9 @@
         "close": "sluiten",
         "save": "bewaar",
         "cancel": "terug",
-        "link": "link"
+        "link": "link",
+        "import": "",
+        "importinfo": ""
     },
     "errors": {
         "Failed to load": "'Fout bij het laden van'",
@@ -102,12 +104,24 @@
         "importinfo": "laad een geojson met alle kaartinfo.",
         "export": "exporteer kaart"
     },
+    "metadata": {
+        "edit": "",
+        "name": "naam",
+        "color": "kleur"
+    },
     "track": {
         "name": "naam",
         "description": "beschrijving",
         "geom": "geometrie",
         "create": "maak track",
         "manage": "beheer track"
+    },
+    "waypoint": {
+        "name": "naam",
+        "description": "beschrijving",
+        "geom": "geometrie",
+        "create": "maak punt",
+        "manage": "beheer punt"
     },
     "poi": {
         "name": "naam",

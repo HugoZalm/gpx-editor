@@ -1,5 +1,6 @@
+import { UiStateService } from './ui/ui-state-service';
 import { MapStateService } from './map/state/map-state-service';
-import { inject, Injectable, Signal } from '@angular/core';
+import { inject, Injectable, signal, Signal } from '@angular/core';
 import { ProjectService } from './project/project-service';
 import { HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxTrack } from './project/model/hzxProject';
 import VectorLayer from 'ol/layer/Vector';
@@ -8,6 +9,7 @@ import { UtilsService } from './utils-service';
 import { GpxUtilsService } from './gpx/utils/gpx-utils-service';
 import { MapService } from './map/map.service';
 import { GpxParseService } from './gpx/parser/gpx-parse-service';
+import { InteractionStates } from './map/model/interaction-states.enum';
 // import { FileItem, TrackItem } from '../components/app/project/project-component';
 
 @Injectable({
@@ -17,13 +19,12 @@ export class CoreService {
 
   private projectService = inject(ProjectService);
   private mapService = inject(MapService);
+  private uiStateService = inject(UiStateService);
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
 
-
-  getProject(): Signal<HzxProject> {
-    return this.projectService.getProject();
-  }
+  /* PROJECT */
+  public readonly project = this.projectService.project;
   
   newProject() {
     this.projectService.setEmptyProject();
@@ -44,6 +45,7 @@ export class CoreService {
     this.projectService.saveProject();
   }
 
+  /* FILE */
   addFileToProject(result?: string) {
     const definedResult = result ? result : this.gpxUtilsService.createGpx();
     const gpx = this.gpxParseService.parse(definedResult);
@@ -60,6 +62,7 @@ export class CoreService {
     this.projectService.removeFileFromProject(fileId);
   }
 
+  /* TRACK */
   addNewTrackToFile(fileId: string) {
     this.projectService.addNewTrackToFile(fileId);
   }
@@ -70,6 +73,7 @@ export class CoreService {
   }
 
   moveTrackToFile(fileId: string, trackId: string) {
+    // TODO
     // this.projectService.addFile();
     // if (trackId) {
     //   const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
@@ -77,9 +81,15 @@ export class CoreService {
     // }
   }
 
+  /* METADATA */
   editMetadata(metadata: HzxMetaData) {
     this.projectService.editMetadata(metadata);
     // this.mapService.EditVectorLayerMetadata(id, metadata);
+  }
+
+  /* SELECTION */
+  hasSelection(): boolean {
+    return this.projectService.getSelectedItem() !== undefined;
   }
 
   isSelected(id: string) {
@@ -100,6 +110,15 @@ export class CoreService {
     return this.projectService.getSelectedItem();
   }
 
+  /* INTERACTIONS */
+
+  public interactionStates = InteractionStates;
+
+  isState(state: InteractionStates): boolean {
+    return this.uiStateService.interactionState() === state;
+  }
+
+  /* UTILS */
   isType(type: string, item: HzxItem) {
     return this.projectService.isType(type, item);
   }

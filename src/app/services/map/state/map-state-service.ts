@@ -12,8 +12,10 @@ import View from "ol/View";
 export class MapStateService {
   private map!: olMap;
 
-  vectorLayers = signal<Map<string, VectorLayer>>(new Map());
-  baseLayers = signal<Map<string, TileLayer>>(new Map());
+  private _vectorLayers = signal<Map<string, VectorLayer>>(new Map());
+  public readonly vectorLayers = this._vectorLayers.asReadonly();
+  private _baseLayers = signal<Map<string, TileLayer>>(new Map());
+  public readonly baseLayers = this._baseLayers.asReadonly();
 
   hasSelectInteraction = signal<boolean>(false);
 
@@ -26,19 +28,18 @@ export class MapStateService {
     return this.map;
   }
 
-
   /* VectorLayers */
-  getVectorLayers(): Map<string, VectorLayer> {
-    return this.vectorLayers();
-  }
+  // getVectorLayers(): Map<string, VectorLayer> {
+  //   return this._vectorLayers();
+  // }
 
-  getVectorLayer(id: string): VectorLayer | undefined {
-    return this.vectorLayers().get(id);
-  }
+  // getVectorLayer(id: string): VectorLayer | undefined {
+  //   return this._vectorLayers().get(id);
+  // }
 
   upsertVectorLayer(id: string, layer: VectorLayer): void {
-    const message = (this.vectorLayers().has(id)) ? 'vectorlayer updated' : 'vectorlayer added';
-    this.vectorLayers.update((b) => {
+    const message = (this._vectorLayers().has(id)) ? 'vectorlayer updated' : 'vectorlayer added';
+    this._vectorLayers.update((b) => {
       const newMap = new Map(b);
       newMap.set(id, layer);
       console.info(message);
@@ -47,8 +48,8 @@ export class MapStateService {
   }
 
   removeVectorLayer(id: string): void {
-    if (this.vectorLayers().has(id)) {
-      this.vectorLayers.update((b) => {
+    if (this._vectorLayers().has(id)) {
+      this._vectorLayers.update((b) => {
         const newMap = new Map(b);
           newMap.delete(id);
           console.info('vectorlayer removed');
@@ -60,17 +61,17 @@ export class MapStateService {
   }
 
   /* BaseLayers */
-  getBaseLayers(): Map<string, TileLayer> {
-    return this.baseLayers();
-  }
+  // getBaseLayers(): Map<string, TileLayer> {
+  //   return this._baseLayers();
+  // }
 
-  getBaseLayer(id: string): TileLayer | undefined {
-    return this.baseLayers().get(id);
-  }
+  // getBaseLayer(id: string): TileLayer | undefined {
+  //   return this._baseLayers().get(id);
+  // }
 
   upsertBaseLayer(id: string, layer: TileLayer): void {
-    const message = (this.baseLayers().has(id)) ? 'baselayer updated' : 'baselayer added';
-    this.baseLayers.update((b) => {
+    const message = (this._baseLayers().has(id)) ? 'baselayer updated' : 'baselayer added';
+    this._baseLayers.update((b) => {
       const newMap = new Map(b);
       newMap.set(id, layer);
       console.info(message);
@@ -79,8 +80,8 @@ export class MapStateService {
   }
 
   removeBaseLayer(id: string): void {
-    if (this.baseLayers().has(id)) {
-      this.baseLayers.update((b) => {
+    if (this._baseLayers().has(id)) {
+      this._baseLayers.update((b) => {
         const newMap = new Map(b);
           newMap.delete(id);
           console.info('baselayer removed');

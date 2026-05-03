@@ -41,7 +41,7 @@ export class VectorLayerService {
 
   public updateVectorLayer(feature: HzxFeature, selected?: boolean): string {
     const id = feature.metadata.id;
-    const layer = this.mapState.getVectorLayers().get(id);
+    const layer = this.mapState.vectorLayers().get(id);
     if (layer) {
       this.mapState.removeVectorLayer(id);
       this.mapState.getMap().addLayer(layer);
@@ -63,14 +63,14 @@ export class VectorLayerService {
   }
 
   public removeAllVectorLayers() {
-    Array.from(this.mapState.getVectorLayers().entries()).forEach((entry) => {
+    Array.from(this.mapState.vectorLayers().entries()).forEach((entry) => {
       this.mapState.removeVectorLayer(entry[0]);
       this.mapState.getMap().removeLayer(entry[1]);
     });
   }
 
   public removeVectorLayers(layerIds: string[]) {
-    Array.from(this.mapState.getVectorLayers().entries()).forEach((entry) => {
+    Array.from(this.mapState.vectorLayers().entries()).forEach((entry) => {
       if (layerIds.includes(entry[0])) {
         this.mapState.removeVectorLayer(entry[0]);
         this.mapState.getMap().removeLayer(entry[1]);
@@ -79,7 +79,7 @@ export class VectorLayerService {
   }
 
   public removeVectorLayer(id: string) {
-    const layer = this.mapState.getVectorLayers().get(id);
+    const layer = this.mapState.vectorLayers().get(id);
     if (layer) {
       this.mapState.removeVectorLayer(id);
       this.mapState.getMap().removeLayer(layer);

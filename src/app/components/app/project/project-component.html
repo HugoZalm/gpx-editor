@@ -1,7 +1,7 @@
 <div
   class="projectname"
   [matContextMenuTriggerFor]="projectMenu"
-  (contextmenu)="select($event, projectStateService.project())"
+  (contextmenu)="selectForAction($event, projectStateService.project())"
   [matTooltip]="'menu.rightclick.tooltip' | translate"
 >
   <div>
@@ -15,7 +15,7 @@
     <div
       class="file-list-item"
       [matContextMenuTriggerFor]="fileMenu"
-      (contextmenu)="select($event, file)"
+      (contextmenu)="selectForAction($event, file)"
     >
       <div>{{ file.metadata.name }}</div>
 
@@ -24,9 +24,9 @@
           class="track-list-item color"
           [style.--color]="track.metadata.color"
           [ngClass]="{ selected: isSelected(track.metadata.id) }"
-          (click)="select($event)"
+          (click)="selectTrack($event, track)"
           [matContextMenuTriggerFor]="trackMenu"
-          (contextmenu)="select($event, track)"
+          (contextmenu)="selectForAction($event, track)"
         >
           <div>{{ track.metadata.name }}</div>
         </div>

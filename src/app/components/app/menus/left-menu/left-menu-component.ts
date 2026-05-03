@@ -13,10 +13,7 @@ import { CoreService } from '../../../../services/core-service';
   styleUrl: './left-menu-component.scss',
 })
 export class LeftMenuComponent {
-  // public projectStateService = inject(ProjectStateService);
-  // public mapStateService = inject(MapStateService);
-  // private mapService = inject(MapService);
-  private coreService = inject(CoreService);
+  public coreService = inject(CoreService);
 
   handleAction(action: string) {
     // alert(action + '-button clicked');

@@ -1,1 +1,8 @@
 <p>settings-component works!</p>
+<p>Versie: {{ version }} - {{ buildTime }} </p>
+
+<mat-button-toggle-group [value]="currentLang" (change)="setLanguage($event.value)">
+  @for (lang of languages; track lang) {
+    <mat-button-toggle [value]="lang">{{ lang }}</mat-button-toggle>
+  }
+</mat-button-toggle-group>

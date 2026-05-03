@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "compodoc": "npx @compodoc/compodoc -p tsconfig.doc.json",
-    "github:build": "ng build --configuration production --output-path docs --base-href /gpx-editor/"
+    "github:build:1": "ng build --configuration production --output-path docs --base-href /gpx-editor/",
+    "github:build": "npm version patch --no-git-tag-version && node generate-version.js && ng build --configuration production --output-path docs --base-href /gpx-editor/"
   },
   "private": true,
   "packageManager": "npm@10.8.2",
