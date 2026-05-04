@@ -1,3 +1,4 @@
+import { GpxConverterService } from './converter/gpx-converter-service';
 import { UiStateService } from './ui/ui-state-service';
 import { MapStateService } from './map/state/map-state-service';
 import { inject, Injectable, signal, Signal } from '@angular/core';
@@ -22,6 +23,7 @@ export class CoreService {
   private uiStateService = inject(UiStateService);
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
+  private gpxConverterService = inject(GpxConverterService);
 
   /* PROJECT */
   public readonly project = this.projectService.project;
@@ -48,12 +50,13 @@ export class CoreService {
   /* FILE */
   addFileToProject(result?: string) {
     const definedResult = result ? result : this.gpxUtilsService.createGpx();
-    const gpx = this.gpxParseService.parse(definedResult);
-    if (gpx) {
-      this.projectService.addFileToProject(gpx);
-      const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
-      this.mapService.createVectorLayers(features);
-    }
+    const gpx = this.gpxConverterService.toJson(definedResult);
+    // const gpx = this.gpxParseService.parse(definedResult);
+    // if (gpx) {
+    //   this.projectService.addFileToProject(gpx);
+    //   const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
+    //   this.mapService.createVectorLayers(features);
+    // }
   }
 
   removeFileFromProject(fileId: string) {
