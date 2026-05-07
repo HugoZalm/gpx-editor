@@ -17,6 +17,7 @@ import { ProjectStateService } from '../../../services/project/state/project-sta
 import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SelectDialog } from '../dialogs/select/select-dialog';
+import project from './project.json';
 
 
 @Component({
@@ -40,8 +41,12 @@ export class ProjectComponent {
   public projectStateService = inject(ProjectStateService);
   public uiStateService = inject(UiStateService);
 
-
   private clickedItem: HzxItem | undefined = undefined;
+
+  ngOnInit() {
+    const string = JSON.stringify(project);
+    this.coreService.replaceProject(string);
+  }
 
   selectTrack(event: Event, item: HzxTrack): void {
     event.stopPropagation();
@@ -131,6 +136,9 @@ export class ProjectComponent {
         break;
       case 'cut-track':
         this.openWipDialog();
+        break;
+      case 'clear-selection':
+        this.coreService.clearSelection();
         break;
     }
     this.clickedItem = undefined;

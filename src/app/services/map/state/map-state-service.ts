@@ -5,19 +5,26 @@ import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector';
 import olMap from "ol/Map";
 import View from "ol/View";
+import { InteractionStates } from '../model/interaction-states.enum';
+import Feature from 'ol/Feature';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MapStateService {
   private map!: olMap;
+  private select!: Select;
 
   private _vectorLayers = signal<Map<string, VectorLayer>>(new Map());
   public readonly vectorLayers = this._vectorLayers.asReadonly();
   private _baseLayers = signal<Map<string, TileLayer>>(new Map());
   public readonly baseLayers = this._baseLayers.asReadonly();
-
-  hasSelectInteraction = signal<boolean>(false);
+  private _interactionState = signal<InteractionStates>(InteractionStates.NONE);
+  public readonly interactionState = this._interactionState.asReadonly();
+  private _selectedFeatures = signal<Feature[]>([]);
+  public readonly selectedFeatures = this._selectedFeatures.asReadonly();
+  private _splitresult = signal<any>(undefined);
+  public readonly splitResult = this._splitresult.asReadonly();
 
   /* Map */
   setMap(map: olMap) {
@@ -26,6 +33,15 @@ export class MapStateService {
 
   getMap(): olMap {
     return this.map;
+  }
+
+  /* SELECT */
+  setSelect(select: Select) {
+    this.select = select;
+  }
+
+  getSelect(): Select {
+    return this.select;
   }
 
   /* VectorLayers */
@@ -91,4 +107,35 @@ export class MapStateService {
       console.warn('baselayer does not exist');
     }
   }
+
+  /* INTERACTIONS */
+
+  setInteractionState(state: InteractionStates): void {
+    this._interactionState.set(state);
+  }
+
+  addSelectedFeature(feature: Feature): void {
+    this._selectedFeatures.update((sfs) => [...sfs, feature]);
+  }
+
+  removeSelectedFeature(feature: Feature): void {
+    this._selectedFeatures.update((sfs) => {
+      const idx = sfs.findIndex((s) => s.getId() === feature.getId());
+      if (idx > -1) {
+        return sfs.splice(idx, 1);
+      } else {
+        return sfs;
+      }
+    });
+  }
+
+  clearSelection() {
+    this._selectedFeatures.set([]);
+  }
+
+  /* SplitResult */
+  setSplitResult(result: any) {
+    this._splitresult.set(result);
+  }
+
 }

@@ -19,10 +19,6 @@ export class UiStateService {
   private _panels = signal<Panels>({ right: true, bottom: false});
   public readonly panels = this._panels.asReadonly();
 
-  private _interactionState = signal<InteractionStates>(InteractionStates.NONE);
-  public readonly interactionState = this._interactionState.asReadonly();
-
-
   togglePanel(type: PanelTypes) {
     switch(type) {
       case PanelTypes.BOTTOM:
@@ -40,5 +36,6 @@ export class UiStateService {
     }
     console.log('Panels state changed', this._panels());
   }
+
 
 }

@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import Feature from 'ol/Feature';
+import { HzxFeature } from './project/model/hzxProject';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +41,17 @@ export class UtilsService {
       extra: arr2.filter(x => !set1.has(x)),
       common: arr1.filter(x => set2.has(x)),
     };
+  }
+
+  createFeature(feature: Feature): HzxFeature {
+    return {
+      metadata: {
+        id: feature.get(''),
+        name: this.getRandomName(),
+        color: this.getRandomColor()
+      },
+      feature
+    }
   }
 
 }

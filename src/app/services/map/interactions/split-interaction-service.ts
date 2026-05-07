@@ -3,6 +3,7 @@ import Split from 'ol-ext/interaction/Split';
 import { HzxFeature } from '../../project/model/hzxProject';
 import { MapStateService } from '../state/map-state-service';
 import { UtilsService } from '../../utils-service';
+import Feature from 'ol/Feature';
 
 @Injectable({
   providedIn: 'root',
@@ -22,21 +23,17 @@ export class SplitInteractionService {
       });
       this.mapState.getMap().addInteraction(this.split);
       this.split.on('aftersplit', (event: any) => {
-        console.log('Original feature:', event.original);
-        console.log('New features:', event.features);
         Array.from(event.features).forEach((feature: any) => {
-          console.log('feature:', feature);
-          const metadata = { id: crypto.randomUUID(), name: this.utils.getRandomName(), color: this.utils.getRandomColor() };
-          const hzxFeature: HzxFeature = { metadata, feature };
-          // this.createVectorLayer(hzxFeature);
+          feature.set('id', crypto.randomUUID());
+          feature.setStyle(null);
         });
-        // this.removeVectorLayer(id);
-        // this.addMissingVectorLayers();
+        this.mapState.setSplitResult(event);
       });
     }
   }
 
   public removeSplitter(): void {
+    this.mapState.getMap().removeInteraction(this.split);
     this.split = new Split();
   }
 

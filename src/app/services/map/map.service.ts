@@ -2,15 +2,20 @@ import { VectorLayerService } from './layers/vector-layer-service';
 import { SplitInteractionService } from './interactions/split-interaction-service';
 import { SelectInteractionService } from './interactions/select-interaction-service';
 import { BaseLayerService } from './layers/base-layer-service';
-import { inject, Injectable } from "@angular/core";
+import { effect, inject, Injectable } from "@angular/core";
 import olMap from "ol/Map";
 import View from "ol/View";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import { createEmpty, extend } from 'ol/extent';
 import { MapStateService } from "./state/map-state-service";
-import { defaults as defaultInteractions } from 'ol/interaction';
+import { defaults as defaultInteractions, Select } from 'ol/interaction';
 import { HzxFeature } from "../project/model/hzxProject";
+import { InteractionStates } from './model/interaction-states.enum';
+import { Geometry, LineString } from 'ol/geom';
+import Feature from 'ol/Feature';
+import { SelectEvent } from 'ol/interaction/Select';
+import { Coordinate } from 'ol/coordinate';
 
 
 @Injectable({
@@ -24,10 +29,14 @@ export class MapService {
   private selectInteractionService = inject(SelectInteractionService);
   private splitInteractionService = inject(SplitInteractionService);
 
+  private select!: Select;
+
+
   constructor() {
     this.createMap();
     this.baseLayerService.createOsmLayer();
     // this.baseLayerService.createOpenTopoLayer();
+
   }
 
   /* MAP */
@@ -43,6 +52,20 @@ export class MapService {
       }),
     });
     this.mapState.setMap(map);
+    this.selectInteractionService.addSelection();
+
+    effect(() => {
+      const selectedFeatures = this.mapState.selectedFeatures();
+      console.log('Selection changed:', selectedFeatures);
+      if (this.mapState.interactionState() === InteractionStates.SPLITTER) {
+        if (selectedFeatures[0]) {
+          const id: string = selectedFeatures[0].get('id') as string;
+          // this.splitInteractionService.addSplitter(id);
+        } else {
+          // this.splitInteractionService.removeSplitter();
+        }
+      }
+    });
   }
 
   /** Attach the map to a DOM element */
@@ -54,6 +77,15 @@ export class MapService {
   public clearTarget(): void {
     this.mapState.getMap().setTarget(undefined);
   }
+
+  // public addSelection() {
+  //   this.select = new Select();
+  //   this.mapState.getMap().addInteraction(this.select);
+  //   this.select.on('select', (event: SelectEvent) => {
+  //     this.onSelect(event);
+  //   });
+  // }
+
 
   public setCenterFromLonLat(lon: number, lat: number, zoom?: number): void {
     const view = this.mapState.getMap().getView();
@@ -122,11 +154,23 @@ export class MapService {
   }
 
   /* INTERACTIONS */
+
+  setInteractionState(state: InteractionStates): void {
+    this.mapState.setInteractionState(state);
+    if (this.mapState.interactionState() === InteractionStates.SPLITTER) {
+      this.setSelection(true);
+    } else {
+      this.setSelection(false);
+    }
+  }
+  
   setSelection(active: boolean) {
     if (active === true) {
-      this.selectInteractionService.addSelection();
+      this.mapState.getSelect().setActive(true);
     } else {
-      this.selectInteractionService.removeSelection();
+      this.mapState.getSelect().setActive(false);
+      this.mapState.getSelect().getFeatures().clear();
+      this.mapState.clearSelection();
     }
   }
 
@@ -134,7 +178,10 @@ export class MapService {
     if (id) {
       this.splitInteractionService.addSplitter(id);
     } else {
+      this.mapState.setSplitResult(undefined);
+      this.setInteractionState(InteractionStates.NONE);
       this.splitInteractionService.removeSplitter();
+      this.selectInteractionService.removeSelection();
     }
   }
 

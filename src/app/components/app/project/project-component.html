@@ -88,6 +88,15 @@
       (onAction)="handleAction($event)"
       [tooltip]="'menu.openfile.tooltip'"
     ></app-menu-button>
+    @if (projectStateService.selectedItemId()) {
+      <app-menu-button
+        [label]="'menu.clearselection'"
+        [icon]="'clear-selection'"
+        [action]="'clear-selection'"
+        (onAction)="handleAction($event)"
+        [tooltip]="'menu.clearselection.tooltip'"
+      ></app-menu-button>
+    }
   </div>
 </mat-menu>
 

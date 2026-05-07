@@ -6,6 +6,7 @@ import { ProjectStateService } from '../../../../services/project/state/project-
 import { HzxTrack } from '../../../../services/project/model/hzxProject';
 import { CoreService } from '../../../../services/core-service';
 import { UiStateService } from '../../../../services/ui/ui-state-service';
+import { InteractionStates } from '../../../../services/map/model/interaction-states.enum';
 
 @Component({
   selector: 'app-left-menu',
@@ -16,27 +17,35 @@ import { UiStateService } from '../../../../services/ui/ui-state-service';
 export class LeftMenuComponent {
   public coreService = inject(CoreService);
   public projectStateService = inject(ProjectStateService);
-  public uiStateService = inject(UiStateService);
+  public mapStateService = inject(MapStateService);
 
 
   handleAction(action: string) {
     // alert(action + '-button clicked');
     // let id;
     switch (action) {
-      case 'clear-selection':
-        this.coreService.clearSelection();
+      case 'select':
+        this.coreService.setInteractionState(InteractionStates.SELECTION);
         break;
-      case 'edit':
       case 'combine':
+        this.coreService.setInteractionState(InteractionStates.COMBINER);
         // this.mapService.setSelection(true);
         break;
       case 'cut':
+        this.coreService.setInteractionState(InteractionStates.SPLITTER);
         // id = this.coreService.getSelectedItem();
         // if(id) {
           // this.mapService.setSplitter(id);
         // }
         break;
       case 'close-selection':
+        this.coreService.setInteractionState(InteractionStates.NONE);
+        break;
+      case 'close-splitter':
+        this.coreService.setInteractionState(InteractionStates.NONE);
+        break;
+      case 'close-combine':
+        this.coreService.setInteractionState(InteractionStates.NONE);
         // this.mapService.setSelection(false);
         break;
     }

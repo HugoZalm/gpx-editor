@@ -1,7 +1,7 @@
 import { GpxConverterService } from './converter/gpx-converter-service';
 import { UiStateService } from './ui/ui-state-service';
 import { MapStateService } from './map/state/map-state-service';
-import { inject, Injectable, signal, Signal } from '@angular/core';
+import { effect, inject, Injectable, signal, Signal } from '@angular/core';
 import { ProjectService } from './project/project-service';
 import { HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxTrack } from './project/model/hzxProject';
 import VectorLayer from 'ol/layer/Vector';
@@ -12,6 +12,10 @@ import { MapService } from './map/map.service';
 import { GpxParseService } from './gpx/parser/gpx-parse-service';
 import { InteractionStates } from './map/model/interaction-states.enum';
 import { metadata } from '@angular/forms/signals';
+import { SelectEvent } from 'ol/interaction/Select';
+import { Geometry } from 'ol/geom';
+import Feature from 'ol/Feature';
+import { Coordinate } from 'ol/coordinate';
 // import { FileItem, TrackItem } from '../components/app/project/project-component';
 
 @Injectable({
@@ -21,6 +25,7 @@ export class CoreService {
 
   private projectService = inject(ProjectService);
   private mapService = inject(MapService);
+  private mapStateService = inject(MapStateService);
   private uiStateService = inject(UiStateService);
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
@@ -29,6 +34,30 @@ export class CoreService {
 
   /* PROJECT */
   public readonly project = this.projectService.project;
+
+  constructor() {
+    this.mapStateService.getSelect().on('select', (event: SelectEvent) => {
+      this.onSelect(event);
+    });
+    effect(() => {
+      // const splitResult = this.mapStateService.splitResult();
+      // console.log('Split changed:', splitResult);
+      // if (splitResult) {
+      //   console.log('Original feature:', splitResult.original);
+      //   const fileId = this.projectService.getItemByIdWithParentId(splitResult.original.get('id'));
+      //   Array.from(splitResult.features).forEach((feature: any) => {
+      //     console.log('feature:', feature);
+      //     const layer = this.mapService.createVectorLayer(this.utilsService.createFeature(feature));
+      //     // this.gpxUtilsService.createTrack('');
+      //     // this.projectService.addTrackToFile()
+      //   // TODO add new features to Project
+      //   });
+      //   this.mapService.removeVectorLayer(splitResult.original.get('id'));
+      //   // TODO remove oldFeature from project (if users agrees)
+      //   this.mapService.setSplitter(undefined);
+      // }
+    });
+  }
   
   newProject() {
     this.projectService.setEmptyProject();
@@ -150,13 +179,44 @@ export class CoreService {
 
   public interactionStates = InteractionStates;
 
-  isState(state: InteractionStates): boolean {
-    return this.uiStateService.interactionState() === state;
+  isInteractionState(state: InteractionStates): boolean {
+    return this.mapStateService.interactionState() === state;
+  }
+
+  setInteractionState(state: InteractionStates): void {
+    this.mapService.setInteractionState(state);
   }
 
   /* UTILS */
   isType(type: string, item: HzxItem) {
     return this.projectService.isType(type, item);
+  }
+
+  private onSelect(event: SelectEvent) {
+    const feature = event.selected[0];
+    if (!feature) {
+      this.mapStateService.clearSelection();
+      return;
+    }
+    console.log('CLICKED on feature', feature);
+    if (this.mapStateService.interactionState() === InteractionStates.SPLITTER) {
+      const clickCoord = event.mapBrowserEvent.coordinate;
+      const closest = this.getClosestPointOnLine(feature, clickCoord);
+      console.log('Closest point on line:', closest);
+      const id = feature.get('id');
+      const track = this.projectService.getItemById(id);
+      if (track) {
+        const best = this.gpxUtilsService.findClosestTrackPointIndex((track as HzxTrack).track, closest);
+        console.log('BEST', best);
+      }
+    }
+    // this.mapState.addSelectedFeature(feature);
+  }
+
+  private getClosestPointOnLine(feature: Feature<Geometry>, coordinate: Coordinate): Coordinate {
+    // returns closest point ON the line (not necessarily a vertex)
+    const geom = feature.getGeometry()!;
+    return geom.getClosestPoint(coordinate);
   }
 
 }

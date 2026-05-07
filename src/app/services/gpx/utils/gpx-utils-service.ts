@@ -1,8 +1,8 @@
-import { ParsedGPX, Track } from '@we-gold/gpxjs';
+import { Track, Point } from '@we-gold/gpxjs';
 import { Injectable } from '@angular/core';
 import Feature from 'ol/Feature';
-import { Coordinate } from 'ol/coordinate';
-import { fromLonLat } from 'ol/proj';
+import { Coordinate, CoordinateFormat } from 'ol/coordinate';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { LineString } from 'ol/geom';
 import { HzxGpx, HzxFeature, HzxTrack } from '../../project/model/hzxProject';
 
@@ -72,5 +72,27 @@ export class GpxUtilsService {
     return { metadata, feature };
   }
 
+  findClosestTrackPointIndex(track: Track, coord: Coordinate): { index: number; distance: number } {
+    let best = {
+      index: -1,
+      distance: Infinity
+    };
+    track.points.forEach((p, i) => {
+      const pp = toLonLat([coord[0], coord[1]]);
+      const d = this.distance([p.longitude, p.latitude], pp);
+      if (d < best.distance) {
+        best = {
+          index: i,
+          distance: d
+        };
+      }
+    });
+    return best;
+  }
 
+  distance(a: Coordinate, b: Coordinate): number {
+    const dx = a[0] - b[0];
+    const dy = a[1] - b[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 }

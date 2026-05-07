@@ -22,13 +22,14 @@ export class VectorLayerService {
   }
     
   public createVectorLayer(feature: HzxFeature): string {
+    const id = feature.metadata.id;
+    feature.feature.set('id', id)
     const vectorSource = new VectorSource({
       features: [feature.feature]
     });
     const vectorLayer = new VectorLayer({
       source: vectorSource
     });
-    const id = feature.metadata.id;
     vectorLayer.set('id', id);
     vectorLayer.set('name', feature.metadata.name);
     vectorLayer.set('color', feature.metadata.color);
