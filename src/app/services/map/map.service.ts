@@ -6,17 +6,11 @@ import { inject, Injectable } from "@angular/core";
 import olMap from "ol/Map";
 import View from "ol/View";
 import { fromLonLat } from "ol/proj";
-import { Coordinate, createStringXY } from "ol/coordinate";
 import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { getPointResolution } from "ol/proj.js";
-import { Stroke, Style } from "ol/style";
-import WKT from "ol/format/WKT";
-import {createEmpty, extend, Extent, getCenter} from 'ol/extent';
+import { createEmpty, extend } from 'ol/extent';
 import { MapStateService } from "./state/map-state-service";
 import { defaults as defaultInteractions } from 'ol/interaction';
 import { HzxFeature } from "../project/model/hzxProject";
-import { UtilsService } from "../utils-service";
 
 
 @Injectable({
@@ -36,6 +30,7 @@ export class MapService {
     // this.baseLayerService.createOpenTopoLayer();
   }
 
+  /* MAP */
   private createMap(): void {
     const map = new olMap({
       interactions: defaultInteractions(),
@@ -48,6 +43,54 @@ export class MapService {
       }),
     });
     this.mapState.setMap(map);
+  }
+
+  /** Attach the map to a DOM element */
+  public setTarget(target: HTMLElement): void {
+    this.mapState.getMap().setTarget(target);
+  }
+
+  /** Detach map (important when component is destroyed) */
+  public clearTarget(): void {
+    this.mapState.getMap().setTarget(undefined);
+  }
+
+  public setCenterFromLonLat(lon: number, lat: number, zoom?: number): void {
+    const view = this.mapState.getMap().getView();
+    view.setCenter(fromLonLat([lon, lat]));
+    if (zoom !== undefined) {
+      view.setZoom(zoom);
+    }
+  }
+
+  public gotoSelectedItems(ids: string[]): void {
+    const combined = createEmpty();
+    ids.forEach((id: string) => {
+      const layer = this.getVectorLayer(id);
+      const source = layer?.getSource();
+      const extent = source?.getExtent();
+      if (extent) {
+        extend(combined, extent);
+      }
+
+    })
+    if (combined) {
+      this.mapState.getMap().getView().fit(combined, { padding: [50, 50, 50, 50] });
+    }
+  }
+
+  public gotoSelectedItem(id: string): void {
+    const layer = this.getVectorLayer(id);
+    const source = layer?.getSource();
+    const extent = source?.getExtent()
+    if (extent) {
+      this.mapState.getMap().getView().fit(extent, { padding: [50, 50, 50, 50] });
+    }
+  }
+
+  /* VECTORLAYERS */
+  getVectorLayer(id: string): VectorLayer | undefined {
+    return this.mapState.vectorLayers().get(id);
   }
 
   createVectorLayers(features: HzxFeature[]): string[] {
@@ -78,7 +121,7 @@ export class MapService {
     this.vectorLayerService.toggleVectorLayerSelection(id);
   }
 
-
+  /* INTERACTIONS */
   setSelection(active: boolean) {
     if (active === true) {
       this.selectInteractionService.addSelection();
@@ -94,89 +137,5 @@ export class MapService {
       this.splitInteractionService.removeSplitter();
     }
   }
-
-  /** Attach the map to a DOM element */
-  public setTarget(target: HTMLElement): void {
-    this.mapState.getMap().setTarget(target);
-  }
-
-  /** Detach map (important when component is destroyed) */
-  public clearTarget(): void {
-    this.mapState.getMap().setTarget(undefined);
-  }
-
-  /** Access to the raw OpenLayers Map */
-  public getMap(): olMap {
-    return this.mapState.getMap();
-  }
-
-  public setCenterFromLonLat(lon: number, lat: number, zoom?: number): void {
-    const view = this.mapState.getMap().getView();
-    view.setCenter(fromLonLat([lon, lat]));
-    if (zoom !== undefined) {
-      view.setZoom(zoom);
-    }
-  }
-
-  // public setCenterFromCoordinate(coordinate: Coordinate, zoom?: number): void {
-  //   const view = this.mapState.getMap().getView();
-  //   view.setCenter(coordinate);
-  //   if (zoom !== undefined) {
-  //     view.setZoom(zoom);
-  //   }
-  // }
-
-  // public fitGeom(geom: string): void {
-  //   const wktFormat = new WKT();
-  //   const feature = wktFormat.readFeature(geom, {
-  //     dataProjection: "EPSG:4326",
-  //     featureProjection: "EPSG:3857",
-  //   });
-  //   const geometry = feature.getGeometry();
-  //   let extent = createEmpty();
-  //   if (geometry) {
-  //     extend(extent, geometry.getExtent());
-  //     this.mapState.getMap().getView().fit(extent, {
-  //       padding: [40, 40, 40, 40],
-  //       duration: 500,
-  //       maxZoom: 18
-  //     });
-  //   }
-  // }
-  
-  // public getView(): View {
-  //   return this.mapState.getMap().getView();
-  // }
-
-  // public getViewCenter(): string {
-  //   const center = this.mapState.getMap().getView().getCenter();
-  //   const stringifyFunc = createStringXY(2);
-  //   const viewCenter = center ? stringifyFunc(center) : "5, 51";
-  //   return `[${viewCenter}]`;
-  // }
-
-  // public getViewZoom(): string {
-  //   const zoom = this.mapState.getMap().getView().getZoom();
-  //   return zoom ? `${zoom}` : "10";
-  // }
-
-  // public getScale(): number {
-  //   let scale: number = 1000;
-  //   const resolution = this.mapState.getMap().getView().getResolution();
-  //   const projection = this.mapState.getMap().getView().getProjection();
-  //   const center = this.mapState.getMap().getView().getCenter();
-  //   if (resolution && center) {
-  //     const pointResolution = getPointResolution(
-  //       projection,
-  //       resolution,
-  //       center,
-  //       "m", // Target units: 'm' for meters
-  //     );
-  //     const dpi = 96;
-  //     const inchesPerMeter = 39.37;
-  //     scale = Math.round(pointResolution * dpi * inchesPerMeter);
-  //   }
-  //   return scale;
-  // }
 
 }

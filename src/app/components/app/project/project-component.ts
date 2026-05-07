@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MenuButtonComponent } from '../buttons/menu-button/menu-button-component';
-import { HzxItem } from '../../../services/project/model/hzxProject';
+import { HzxItem, HzxTrack } from '../../../services/project/model/hzxProject';
 import { PanelTypes, UiStateService } from '../../../services/ui/ui-state-service';
 import { ImportDialog } from '../dialogs/import/import-dialog';
 import { MetadataDialog, MetadataDialogData } from '../dialogs/metadata/metadata-dialog';
@@ -33,14 +33,19 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class ProjectComponent {
   readonly dialog = inject(MatDialog);
 
-  public uiStateService = inject(UiStateService);
   private coreService = inject(CoreService);
   public projectStateService = inject(ProjectStateService);
+  public uiStateService = inject(UiStateService);
 
 
   private clickedItem: HzxItem | undefined = undefined;
 
-  select(event: Event, item?: HzxItem): void {
+  selectTrack(event: Event, item: HzxTrack): void {
+    event.stopPropagation();
+    this.coreService.toggleSelection(item);
+  }
+
+  selectForAction(event: Event, item?: HzxItem): void {
     event.stopPropagation();
     this.clickedItem = item;
   }
@@ -79,6 +84,9 @@ export class ProjectComponent {
       case 'edit-file':
         this.openMetadataDialog();
         break;
+      case 'goto-file':
+        this.goto();
+        break;
       case 'save-file':
         this.openWipDialog();
         break;
@@ -103,6 +111,9 @@ export class ProjectComponent {
       case 'edit-track':
         this.openMetadataDialog();
         break;
+      case 'goto-track':
+        this.goto();
+        break;
       case 'delete-track':
         const trackId = this.clickedItem?.metadata.id;
         if (trackId) {
@@ -118,6 +129,13 @@ export class ProjectComponent {
 
   private openWipDialog() {
     this.dialog.open(WipDialog);
+  }
+
+  private goto(): void {
+    const item = this.clickedItem;
+    if(item) {
+      this.coreService.gotoSelectedItem(item);
+    }
   }
 
   private openImportDialog(type?: string) {

@@ -1,9 +1,10 @@
 import { Component, computed, inject, input, output } from '@angular/core';
-import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
+import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideLocate, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslatePipe } from '@ngx-translate/core';
+import { LucideGarmin, LucideStrava, LucideKomoot } from '../../../../brand-icons';
 
 
 @Component({
@@ -108,6 +109,15 @@ export class IconButtonComponent {
       case 'book':
       case 'documentation':
         return LucideBook;
+      case 'garmin':
+        return LucideGarmin;
+      case 'strava':
+        return LucideStrava;
+      case 'komoot':
+        return LucideKomoot;
+      case 'goto':
+      case 'locate':
+        return LucideLocate;
       case 'bike':
       default:
         return LucideBike;

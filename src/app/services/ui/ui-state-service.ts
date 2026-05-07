@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { InteractionStates } from '../map/model/interaction-states.enum';
 
 export interface Panels {
   right: boolean;
@@ -15,24 +16,29 @@ export enum PanelTypes {
 })
 export class UiStateService {
 
-  panels = signal<Panels>({ right: true, bottom: false});
+  private _panels = signal<Panels>({ right: true, bottom: false});
+  public readonly panels = this._panels.asReadonly();
+
+  private _interactionState = signal<InteractionStates>(InteractionStates.NONE);
+  public readonly interactionState = this._interactionState.asReadonly();
+
 
   togglePanel(type: PanelTypes) {
     switch(type) {
       case PanelTypes.BOTTOM:
-        this.panels.update(p => ({
+        this._panels.update(p => ({
           ...p,
-          bottom: !this.panels().bottom
+          bottom: !this._panels().bottom
         }));
         break;
       case PanelTypes.RIGHT:
-        this.panels.update(p => ({
+        this._panels.update(p => ({
           ...p,
-          right: !this.panels().right
+          right: !this._panels().right
         }));
         break;
     }
-    console.log('Panels state changed', this.panels());
+    console.log('Panels state changed', this._panels());
   }
 
 }
