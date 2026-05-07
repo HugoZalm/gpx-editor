@@ -1,5 +1,5 @@
 <button matButton (click)="emitAction()"
-  [matTooltip]="tooltip()"
+  [matTooltip]="tooltip() | translate"
   [matTooltipShowDelay]="500"
   class="full-width">
   <div class="align">
