@@ -1,3 +1,5 @@
+import { HzxGpx } from './../../../services/project/model/hzxProject';
+import { ProjectService } from './../../../services/project/project-service';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +16,7 @@ import { CoreService } from '../../../services/core-service';
 import { ProjectStateService } from '../../../services/project/state/project-state-service';
 import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SelectDialog } from '../dialogs/select/select-dialog';
 
 
 @Component({
@@ -55,7 +58,7 @@ export class ProjectComponent {
   }
 
   handleAction(action: string) {
-    let fileId;
+    let id;
     switch (action) {
       case 'toggle-panel':
         this.uiStateService.togglePanel(PanelTypes.RIGHT);
@@ -97,15 +100,15 @@ export class ProjectComponent {
         this.openWipDialog();
         break;
       case 'delete-file':
-        fileId = this.clickedItem?.metadata.id;
-        if (fileId) {
-          this.coreService.removeFileFromProject(fileId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.removeFileFromProject(id);
         }
         break;
       case 'new-track':
-        fileId = this.clickedItem?.metadata.id;
-        if (fileId) {
-          this.coreService.addNewTrackToFile(fileId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.addNewTrackToFile(id);
         }
         break;
       case 'edit-track':
@@ -114,10 +117,16 @@ export class ProjectComponent {
       case 'goto-track':
         this.goto();
         break;
+      case 'copy-track':
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.openCopyToDialog();
+        }
+        break;
       case 'delete-track':
-        const trackId = this.clickedItem?.metadata.id;
-        if (trackId) {
-          this.coreService.removeTrackFromFile(trackId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.removeTrackFromFile(id);
         }
         break;
       case 'cut-track':
@@ -161,6 +170,25 @@ export class ProjectComponent {
         if (result !== undefined) {
           console.log(result);
           this.coreService.editMetadata(result);
+        }
+      });
+    }
+  }
+
+  private openCopyToDialog() {
+    const item = this.clickedItem;
+    if (item && this.coreService.isType('track', item)) {
+      const title = 'dialog.selectFile';
+      let list: { label: string, value: string }[] = [];
+      list = this.projectStateService.project().files.map( (file: HzxGpx) => {
+        return { label: file.metadata.name, value: file.metadata.id }
+      });
+      const dialogRef = this.dialog.open(SelectDialog, { data: {title, list }});
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result !== undefined) {
+          console.log('SELECTED', result);
+          const fileId = result;
+          this.coreService.copyTrackToFile(item as HzxTrack, fileId);
         }
       });
     }

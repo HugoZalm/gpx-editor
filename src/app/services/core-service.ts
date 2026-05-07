@@ -11,6 +11,7 @@ import { GpxUtilsService } from './gpx/utils/gpx-utils-service';
 import { MapService } from './map/map.service';
 import { GpxParseService } from './gpx/parser/gpx-parse-service';
 import { InteractionStates } from './map/model/interaction-states.enum';
+import { metadata } from '@angular/forms/signals';
 // import { FileItem, TrackItem } from '../components/app/project/project-component';
 
 @Injectable({
@@ -23,6 +24,7 @@ export class CoreService {
   private uiStateService = inject(UiStateService);
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
+  private utilsService = inject(UtilsService);
   private gpxConverterService = inject(GpxConverterService);
 
   /* PROJECT */
@@ -66,7 +68,8 @@ export class CoreService {
 
   /* TRACK */
   addNewTrackToFile(fileId: string) {
-    this.projectService.addNewTrackToFile(fileId);
+    const id = this.projectService.addNewTrackToFile(fileId);
+    // this.mapService.createVectorLayer(id);
   }
 
   removeTrackFromFile(trackId: string) {
@@ -81,6 +84,19 @@ export class CoreService {
     //   const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
     //   this.mapService.createVectorLayers(features);
     // }
+  }
+
+  copyTrackToFile(track: HzxTrack, fileId: string) {
+    // const id = crypto.randomUUID();
+    const newTrack: HzxTrack = {
+      metadata: { id: crypto.randomUUID() , name: 'COPY: ' + track.metadata.name, color: this.utilsService.getRandomColor()},
+      track: JSON.parse(JSON.stringify(track.track))
+    }
+    const newTrackId = this.projectService.addTrackToFile(newTrack, fileId);
+    if( newTrack && this.isType('track', newTrack)) {
+      const feature = this.gpxUtilsService.gettrackAsFeature(newTrack as HzxTrack);
+      this.mapService.createVectorLayer(feature);
+    }
   }
 
   /* METADATA */

@@ -76,6 +76,10 @@ export class ProjectService {
     return this.projectStateService.addTrack(fileId, newTrack);
   }
 
+  addTrackToFile(track: HzxTrack, fileId: string) {
+    this.projectStateService.addTrack(fileId, track);
+  }
+
   updateTrack(trackId: string) {
     const parentId = this.getItemByIdWithParentId(trackId)?.parentId;
     if (parentId) {
