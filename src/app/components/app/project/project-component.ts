@@ -33,9 +33,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class ProjectComponent {
   readonly dialog = inject(MatDialog);
 
-  public uiStateService = inject(UiStateService);
   private coreService = inject(CoreService);
   public projectStateService = inject(ProjectStateService);
+  public uiStateService = inject(UiStateService);
 
 
   private clickedItem: HzxItem | undefined = undefined;
@@ -84,6 +84,9 @@ export class ProjectComponent {
       case 'edit-file':
         this.openMetadataDialog();
         break;
+      case 'goto-file':
+        this.goto();
+        break;
       case 'save-file':
         this.openWipDialog();
         break;
@@ -108,6 +111,9 @@ export class ProjectComponent {
       case 'edit-track':
         this.openMetadataDialog();
         break;
+      case 'goto-track':
+        this.goto();
+        break;
       case 'delete-track':
         const trackId = this.clickedItem?.metadata.id;
         if (trackId) {
@@ -123,6 +129,13 @@ export class ProjectComponent {
 
   private openWipDialog() {
     this.dialog.open(WipDialog);
+  }
+
+  private goto(): void {
+    const item = this.clickedItem;
+    if(item) {
+      this.coreService.gotoSelectedItem(item);
+    }
   }
 
   private openImportDialog(type?: string) {

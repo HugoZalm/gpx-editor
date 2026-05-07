@@ -10,7 +10,6 @@ import {
   HzxItem,
   ItemInfo
 } from '../model/hzxProject';
-import { U } from 'ol/renderer/webgl/FlowLayer';
 
 
 @Injectable({

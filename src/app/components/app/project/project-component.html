@@ -101,6 +101,14 @@
       [tooltip]="'menu.editfile.tooltip'"
     ></app-menu-button>
     <app-menu-button
+      [label]="'menu.gotofile'"
+      [icon]="'goto'"
+      [action]="'goto-file'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.gotofile.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
       [label]="'menu.savefile'"
       [icon]="'file-down'"
       [action]="'save-file'"
@@ -147,6 +155,13 @@
       [action]="'edit-track'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.edittrack.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.gototrack'"
+      [icon]="'goto'"
+      [action]="'goto-track'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.gototrack.tooltip'"
     ></app-menu-button>
     <hr />
     <app-menu-button

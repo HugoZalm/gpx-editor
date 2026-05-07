@@ -6,17 +6,11 @@ import { inject, Injectable } from "@angular/core";
 import olMap from "ol/Map";
 import View from "ol/View";
 import { fromLonLat } from "ol/proj";
-import { Coordinate, createStringXY } from "ol/coordinate";
 import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import { getPointResolution } from "ol/proj.js";
-import { Stroke, Style } from "ol/style";
-import WKT from "ol/format/WKT";
-import {createEmpty, extend, Extent, getCenter} from 'ol/extent';
+import { createEmpty, extend } from 'ol/extent';
 import { MapStateService } from "./state/map-state-service";
 import { defaults as defaultInteractions } from 'ol/interaction';
 import { HzxFeature } from "../project/model/hzxProject";
-import { UtilsService } from "../utils-service";
 
 
 @Injectable({
@@ -66,6 +60,31 @@ export class MapService {
     view.setCenter(fromLonLat([lon, lat]));
     if (zoom !== undefined) {
       view.setZoom(zoom);
+    }
+  }
+
+  public gotoSelectedItems(ids: string[]): void {
+    const combined = createEmpty();
+    ids.forEach((id: string) => {
+      const layer = this.getVectorLayer(id);
+      const source = layer?.getSource();
+      const extent = source?.getExtent();
+      if (extent) {
+        extend(combined, extent);
+      }
+
+    })
+    if (combined) {
+      this.mapState.getMap().getView().fit(combined, { padding: [50, 50, 50, 50] });
+    }
+  }
+
+  public gotoSelectedItem(id: string): void {
+    const layer = this.getVectorLayer(id);
+    const source = layer?.getSource();
+    const extent = source?.getExtent()
+    if (extent) {
+      this.mapState.getMap().getView().fit(extent, { padding: [50, 50, 50, 50] });
     }
   }
 

@@ -50,13 +50,12 @@ export class CoreService {
   /* FILE */
   addFileToProject(result?: string) {
     const definedResult = result ? result : this.gpxUtilsService.createGpx();
-    const gpx = this.gpxConverterService.toJson(definedResult);
-    // const gpx = this.gpxParseService.parse(definedResult);
-    // if (gpx) {
-    //   this.projectService.addFileToProject(gpx);
-    //   const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
-    //   this.mapService.createVectorLayers(features);
-    // }
+    const gpx = this.gpxParseService.parse(definedResult);
+    if (gpx) {
+      this.projectService.addFileToProject(gpx);
+      const features = this.gpxUtilsService.gettracksAsFeatures(gpx);
+      this.mapService.createVectorLayers(features);
+    }
   }
 
   removeFileFromProject(fileId: string) {
@@ -111,6 +110,24 @@ export class CoreService {
 
   getSelectedItem(): HzxItem | undefined {
     return this.projectService.getSelectedItem();
+  }
+
+  clearSelection(): void {
+   const currentSelectedItemId = this.projectService.getSelectedItem()?.metadata.id;
+    if (currentSelectedItemId) {
+      this.mapService.toggleVectorLayerSelection(currentSelectedItemId);
+    }
+    this.projectService.setSelectedItem(undefined);
+  }
+
+  gotoSelectedItem(item: HzxItem): void {
+    if(this.isType('gpx', item)) {
+      const trackIds = this.projectService.getTrackIdsFromFile(item.metadata.id);
+      this.mapService.gotoSelectedItems(trackIds);
+    }
+    if(this.isType('track', item)) {
+      this.mapService.gotoSelectedItems([item.metadata.id]);
+    }
   }
 
   /* INTERACTIONS */
