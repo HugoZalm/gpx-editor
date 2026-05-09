@@ -38,6 +38,14 @@
 <mat-menu #projectMenu="matMenu">
   <div class="sub-menu">
     <app-menu-button
+      [label]="'menu.testproject'"
+      [icon]="'test'"
+      [action]="'open-test'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.testproject.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
       [label]="'menu.editproject'"
       [icon]="'pencil'"
       [action]="'edit-project'"

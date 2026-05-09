@@ -45,7 +45,9 @@ export class ProjectComponent {
 
   private clickedItem: HzxItem | undefined = undefined;
 
-  ngOnInit() {
+  ngOnInit() {}
+
+  openTestProject() {
     const string = JSON.stringify(project);
     this.coreService.replaceProject(string);
   }
@@ -67,6 +69,9 @@ export class ProjectComponent {
   handleAction(action: string) {
     let id;
     switch (action) {
+      case 'open-test':
+        this.openTestProject();
+        break;
       case 'toggle-panel':
         this.uiStateService.togglePanel(PanelTypes.RIGHT);
         break;
