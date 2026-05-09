@@ -34,6 +34,8 @@
     "@we-gold/gpxjs": "^1.1.0",
     "@xmldom/xmldom": "^0.8.13",
     "gpx-builder": "^6.0.0",
+    "highlight.js": "^11.11.1",
+    "ngx-highlightjs": "^14.0.1",
     "ngx-indexed-db": "^22.0.0",
     "ngx-webstorage": "^21.0.1",
     "ol": "^10.8.0",

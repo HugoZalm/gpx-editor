@@ -1,5 +1,4 @@
 import { VectorLayerService } from './layers/vector-layer-service';
-import { SplitInteractionService } from './interactions/split-interaction-service';
 import { SelectInteractionService } from './interactions/select-interaction-service';
 import { BaseLayerService } from './layers/base-layer-service';
 import { effect, inject, Injectable } from "@angular/core";
@@ -10,12 +9,8 @@ import VectorLayer from "ol/layer/Vector";
 import { createEmpty, extend } from 'ol/extent';
 import { MapStateService } from "./state/map-state-service";
 import { defaults as defaultInteractions, Select } from 'ol/interaction';
-import { HzxFeature } from "../project/model/hzxProject";
+import { HzxFeature, HzxMetaData } from "../project/model/hzxProject";
 import { InteractionStates } from './model/interaction-states.enum';
-import { Geometry, LineString } from 'ol/geom';
-import Feature from 'ol/Feature';
-import { SelectEvent } from 'ol/interaction/Select';
-import { Coordinate } from 'ol/coordinate';
 
 
 @Injectable({
@@ -27,10 +22,6 @@ export class MapService {
   private baseLayerService = inject(BaseLayerService);
   private vectorLayerService = inject(VectorLayerService);
   private selectInteractionService = inject(SelectInteractionService);
-  private splitInteractionService = inject(SplitInteractionService);
-
-  private select!: Select;
-
 
   constructor() {
     this.createMap();
@@ -60,9 +51,6 @@ export class MapService {
       if (this.mapState.interactionState() === InteractionStates.SPLITTER) {
         if (selectedFeatures[0]) {
           const id: string = selectedFeatures[0].get('id') as string;
-          // this.splitInteractionService.addSplitter(id);
-        } else {
-          // this.splitInteractionService.removeSplitter();
         }
       }
     });
@@ -77,15 +65,6 @@ export class MapService {
   public clearTarget(): void {
     this.mapState.getMap().setTarget(undefined);
   }
-
-  // public addSelection() {
-  //   this.select = new Select();
-  //   this.mapState.getMap().addInteraction(this.select);
-  //   this.select.on('select', (event: SelectEvent) => {
-  //     this.onSelect(event);
-  //   });
-  // }
-
 
   public setCenterFromLonLat(lon: number, lat: number, zoom?: number): void {
     const view = this.mapState.getMap().getView();
@@ -133,9 +112,9 @@ export class MapService {
     return this.vectorLayerService.createVectorLayer(feature);
   }
 
-  updateVectorLayer(feature: HzxFeature, selected?: boolean): string {
-    return this.vectorLayerService.updateVectorLayer(feature, selected);
-  }
+  // updateVectorLayer(feature: HzxFeature, selected?: boolean): string {
+  //   return this.vectorLayerService.updateVectorLayer(feature, selected);
+  // }
 
   removeAllVectorLayers() {
     this.vectorLayerService.removeAllVectorLayers();
@@ -151,6 +130,16 @@ export class MapService {
 
   public toggleVectorLayerSelection(id: string) {
     this.vectorLayerService.toggleVectorLayerSelection(id);
+  }
+
+  EditVectorLayerMetadata(metadata: HzxMetaData) {
+    const layer = this.getVectorLayer(metadata.id);
+    if (layer) {
+      layer.set('id', metadata.id);
+      layer.set('name', metadata.name);
+      layer.set('color', metadata.color);
+      layer.changed();
+    }
   }
 
   /* INTERACTIONS */
@@ -171,17 +160,6 @@ export class MapService {
       this.mapState.getSelect().setActive(false);
       this.mapState.getSelect().getFeatures().clear();
       this.mapState.clearSelection();
-    }
-  }
-
-  setSplitter(id?: string) {
-    if (id) {
-      this.splitInteractionService.addSplitter(id);
-    } else {
-      this.mapState.setSplitResult(undefined);
-      this.setInteractionState(InteractionStates.NONE);
-      this.splitInteractionService.removeSplitter();
-      this.selectInteractionService.removeSelection();
     }
   }
 

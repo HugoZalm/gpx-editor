@@ -33,10 +33,6 @@ export class LeftMenuComponent {
         break;
       case 'cut':
         this.coreService.setInteractionState(InteractionStates.SPLITTER);
-        // id = this.coreService.getSelectedItem();
-        // if(id) {
-          // this.mapService.setSplitter(id);
-        // }
         break;
       case 'close-selection':
         this.coreService.setInteractionState(InteractionStates.NONE);

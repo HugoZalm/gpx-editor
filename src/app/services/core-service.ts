@@ -1,36 +1,31 @@
-import { GpxConverterService } from './converter/gpx-converter-service';
-import { UiStateService } from './ui/ui-state-service';
 import { MapStateService } from './map/state/map-state-service';
-import { effect, inject, Injectable, signal, Signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ProjectService } from './project/project-service';
 import { HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxTrack } from './project/model/hzxProject';
-import VectorLayer from 'ol/layer/Vector';
-import VectorSource from 'ol/source/Vector';
 import { UtilsService } from './utils-service';
 import { GpxUtilsService } from './gpx/utils/gpx-utils-service';
 import { MapService } from './map/map.service';
 import { GpxParseService } from './gpx/parser/gpx-parse-service';
 import { InteractionStates } from './map/model/interaction-states.enum';
-import { metadata } from '@angular/forms/signals';
 import { SelectEvent } from 'ol/interaction/Select';
 import { Geometry } from 'ol/geom';
 import Feature from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
-// import { FileItem, TrackItem } from '../components/app/project/project-component';
+import { MatDialog } from '@angular/material/dialog';
+import { MessageDialog } from '../components/app/dialogs/message/message-dialog';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoreService {
+  readonly dialog = inject(MatDialog);
 
   private projectService = inject(ProjectService);
   private mapService = inject(MapService);
   private mapStateService = inject(MapStateService);
-  private uiStateService = inject(UiStateService);
   private gpxParseService = inject(GpxParseService);
   private gpxUtilsService = inject(GpxUtilsService);
   private utilsService = inject(UtilsService);
-  private gpxConverterService = inject(GpxConverterService);
 
   /* PROJECT */
   public readonly project = this.projectService.project;
@@ -38,24 +33,6 @@ export class CoreService {
   constructor() {
     this.mapStateService.getSelect().on('select', (event: SelectEvent) => {
       this.onSelect(event);
-    });
-    effect(() => {
-      // const splitResult = this.mapStateService.splitResult();
-      // console.log('Split changed:', splitResult);
-      // if (splitResult) {
-      //   console.log('Original feature:', splitResult.original);
-      //   const fileId = this.projectService.getItemByIdWithParentId(splitResult.original.get('id'));
-      //   Array.from(splitResult.features).forEach((feature: any) => {
-      //     console.log('feature:', feature);
-      //     const layer = this.mapService.createVectorLayer(this.utilsService.createFeature(feature));
-      //     // this.gpxUtilsService.createTrack('');
-      //     // this.projectService.addTrackToFile()
-      //   // TODO add new features to Project
-      //   });
-      //   this.mapService.removeVectorLayer(splitResult.original.get('id'));
-      //   // TODO remove oldFeature from project (if users agrees)
-      //   this.mapService.setSplitter(undefined);
-      // }
     });
   }
   
@@ -115,10 +92,10 @@ export class CoreService {
     // }
   }
 
-  copyTrackToFile(track: HzxTrack, fileId: string) {
-    // const id = crypto.randomUUID();
+  addTrackToFile(track: HzxTrack, fileId: string, prefix?: string) {
+    const name = prefix ? prefix + track.metadata.name : track.metadata.name;
     const newTrack: HzxTrack = {
-      metadata: { id: crypto.randomUUID() , name: 'COPY: ' + track.metadata.name, color: this.utilsService.getRandomColor()},
+      metadata: { id: crypto.randomUUID() , name, color: this.utilsService.getRandomColor()},
       track: JSON.parse(JSON.stringify(track.track))
     }
     const newTrackId = this.projectService.addTrackToFile(newTrack, fileId);
@@ -131,7 +108,7 @@ export class CoreService {
   /* METADATA */
   editMetadata(metadata: HzxMetaData) {
     this.projectService.editMetadata(metadata);
-    // this.mapService.EditVectorLayerMetadata(id, metadata);
+    this.mapService.EditVectorLayerMetadata(metadata);
   }
 
   /* SELECTION */
@@ -203,14 +180,35 @@ export class CoreService {
       const clickCoord = event.mapBrowserEvent.coordinate;
       const closest = this.getClosestPointOnLine(feature, clickCoord);
       console.log('Closest point on line:', closest);
-      const id = feature.get('id');
+      const id = feature.get('layerid');
       const track = this.projectService.getItemById(id);
       if (track) {
         const best = this.gpxUtilsService.findClosestTrackPointIndex((track as HzxTrack).track, closest);
         console.log('BEST', best);
+        // TODO: show splitpoint on map
+        const dialogRef = this.dialog.open(MessageDialog, { data: { 
+          message: 'dialog.continuesplitonpoint',
+          actions: [
+            { label: 'dialog.splitonpoint', value: 'split' },
+            { label: 'dialog.splitonpointandremoveoldtrack', value: 'remove-oldtrack' }
+          ]
+        } });
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result !== undefined) {
+            const newTracks = this.gpxUtilsService.splitTrackAtPointIndex((track as HzxTrack), best.index);
+            console.log('NEW TRACKS', newTracks);
+            const parentId = this.projectService.getItemByIdWithParentId(id)?.parentId;
+            if (parentId) {
+              this.addTrackToFile(newTracks[0], parentId, '[1]: ');
+              this.addTrackToFile(newTracks[1], parentId, '[2]: ');
+              if (result === 'remove-oldtrack') {
+                this.removeTrackFromFile(parentId);
+              }
+            }
+          }
+        });
       }
     }
-    // this.mapState.addSelectedFeature(feature);
   }
 
   private getClosestPointOnLine(feature: Feature<Geometry>, coordinate: Coordinate): Coordinate {

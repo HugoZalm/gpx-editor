@@ -18,6 +18,8 @@ import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SelectDialog } from '../dialogs/select/select-dialog';
 import project from './project.json';
+import { GpxDialog } from '../dialogs/gpx/gpx-dialog';
+import { InfoDialog } from '../dialogs/info/info-dialog';
 
 
 @Component({
@@ -67,6 +69,12 @@ export class ProjectComponent {
     switch (action) {
       case 'toggle-panel':
         this.uiStateService.togglePanel(PanelTypes.RIGHT);
+        break;
+      case 'show-info':
+        this.openInfoDialog();
+        break;
+      case 'show-gpx':
+        this.openGpxDialog();
         break;
       case 'edit-project':
         this.openMetadataDialog();
@@ -155,6 +163,22 @@ export class ProjectComponent {
     }
   }
 
+  private openInfoDialog() {
+    const item = this.clickedItem;
+    if (item) {
+      const dialogRef = this.dialog.open(InfoDialog, { data: item });
+    }
+  }
+
+  private openGpxDialog() {
+    const item = this.clickedItem;
+    if (item) {
+      if(this.coreService.isType('track', item)) {
+        const dialogRef = this.dialog.open(GpxDialog, { data: { item, type: 'track' }});
+      }
+    }
+  }
+
   private openImportDialog(type?: string) {
     const dialogRef = this.dialog.open(ImportDialog, { data: type });
     dialogRef.afterClosed().subscribe((result) => {
@@ -196,7 +220,7 @@ export class ProjectComponent {
         if (result !== undefined) {
           console.log('SELECTED', result);
           const fileId = result;
-          this.coreService.copyTrackToFile(item as HzxTrack, fileId);
+          this.coreService.addTrackToFile(item as HzxTrack, fileId, 'COPY: ');
         }
       });
     }

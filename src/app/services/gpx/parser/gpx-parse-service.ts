@@ -38,11 +38,12 @@ export class GpxParseService {
     const name = file.metadata.name ?? this.getRandomName();
     const id = crypto.randomUUID();
     const color = this.getRandomColor();
+    const meta = file.metadata;
     const tracks = this.parseTracks(file.tracks);
     const routes = this.parseRoutes(file.routes);
     const waypoints = this.parseWaypoints(file.waypoints);
     const metadata: HzxMetaData = { id, name, color };
-    const gpx: HzxGpx = { metadata, raw: file, tracks, routes, waypoints };
+    const gpx: HzxGpx = { metadata, meta, raw: file, tracks, routes, waypoints };
     return gpx;
   }
 

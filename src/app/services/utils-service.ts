@@ -43,15 +43,4 @@ export class UtilsService {
     };
   }
 
-  createFeature(feature: Feature): HzxFeature {
-    return {
-      metadata: {
-        id: feature.get(''),
-        name: this.getRandomName(),
-        color: this.getRandomColor()
-      },
-      feature
-    }
-  }
-
 }

@@ -172,6 +172,20 @@
       (onAction)="handleAction($event)"
       [tooltip]="'menu.gototrack.tooltip'"
     ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.showinfo'"
+      [icon]="'info'"
+      [action]="'show-info'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.showinfo.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.showgpx'"
+      [icon]="'gpx'"
+      [action]="'show-gpx'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.showgpx.tooltip'"
+    ></app-menu-button>
     <hr />
     <app-menu-button
       [label]="'menu.copytrack'"

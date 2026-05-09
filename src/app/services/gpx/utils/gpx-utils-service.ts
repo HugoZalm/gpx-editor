@@ -51,12 +51,6 @@ export class GpxUtilsService {
   gettracksAsFeatures(gpx: HzxGpx): HzxFeature[] {
     const map: HzxFeature[] = [];
     gpx.tracks.forEach((track) => {
-      // const points = track.track.points.map((p) => [p.latitude, p.longitude]);
-      // const coordinates: Coordinate[] = points.map(([lat, lon]) => fromLonLat([lon, lat]));
-      // const feature = new Feature({ geometry: new LineString(coordinates) });
-      // const metadata = track.metadata;
-      // const id = track.metadata.id;
-      // map.push({ metadata, feature });
       const feature = this.gettrackAsFeature(track);
       map.push(feature);
     });
@@ -88,6 +82,88 @@ export class GpxUtilsService {
       }
     });
     return best;
+  }
+
+  splitTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack[] {
+    const firstTrack = this.getFirstPartOfTrackAtPointIndex(track, index);
+    const secondTrack = this.getSecondPartOfTrackAtPointIndex(track, index);
+    return [firstTrack, secondTrack];
+  }
+
+  getFirstPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
+    const newId = crypto.randomUUID();
+    const newTrack: Track = {
+      name: newId,
+      comment: track.track.comment,
+      description: track.track.description,
+      src: track.track.src,
+      number: track.track.number,
+      link: track.track.link,
+      type: track.track.type,
+      points: track.track.points.slice(0, index + 1),
+      distance: {
+        total: track.track.distance.cumulative[index + 1],
+        cumulative: track.track.distance.cumulative.slice(0, index + 1),
+      },
+      duration: {
+        cumulative: track.track.duration.cumulative.slice(0, index + 1),
+        movingDuration: track.track.duration.cumulative[index + 1],
+        totalDuration: 0, // TODO
+        startTime: track.track.duration.startTime,
+        endTime: track.track.duration.endTime, // TODO: new Date(track.track.duration.startTime?.getTime() + track.track.duration.cumulative[index + 1])
+      },
+      elevation: {
+        maximum: null, // TODO Math.max(track.track.slopes.slice(0, index + 1)),
+        minimum: null,
+        positive: null,
+        negative: null,
+        average: null
+      },
+      slopes: track.track.slopes.slice(0, index + 1)
+    }
+    const firstTrack = {
+      metadata: { id: newId, name: newId, color: '' },
+      track: newTrack
+    };
+    return firstTrack;
+  }
+
+  getSecondPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
+    const newId = crypto.randomUUID();
+    const newTrack: Track = {
+      name: newId,
+      comment: track.track.comment,
+      description: track.track.description,
+      src: track.track.src,
+      number: track.track.number,
+      link: track.track.link,
+      type: track.track.type,
+      points: track.track.points.slice(index),
+      distance: {
+        total: track.track.distance.total, // TODO correct: - value of [index -1]
+        cumulative: track.track.distance.cumulative.slice(index), // TODO correct: every value - value of [index -1]
+      },
+      duration: {
+        cumulative: track.track.duration.cumulative.slice(index), // TODO correct: every value - value of [index -1]
+        movingDuration: 0, // TODO track.track.duration.cumulative[index + 1],
+        totalDuration: 0, // TODO
+        startTime: track.track.duration.startTime, // TODO
+        endTime: track.track.duration.endTime, // TODO: new Date(track.track.duration.startTime?.getTime() + track.track.duration.cumulative[index + 1])
+      },
+      elevation: {
+        maximum: null, // TODO Math.max(track.track.slopes.slice(index + 1)),
+        minimum: null, // TODO
+        positive: null, // TODO
+        negative: null, // TODO
+        average: null // TODO
+      },
+      slopes: track.track.slopes.slice() // TODO correct: every value - value of [index -1]
+    }
+    const secondTrack = {
+      metadata: { id: newId, name: newId, color: '' },
+      track: newTrack
+    };
+    return secondTrack;
   }
 
   distance(a: Coordinate, b: Coordinate): number {

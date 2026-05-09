@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>
+  {{ 'info' | translate | titlecase }}
+</h2>
+
+<mat-dialog-content>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button matButton (click)="cancel()">{{ 'dialog.cancel' | translate | titlecase }}</button>
+  @for (action of actions(); track action) {
+    <button matButton (click)="output(action.value)">{{ action.label | translate | titlecase }}</button>
+  }
+</mat-dialog-actions>

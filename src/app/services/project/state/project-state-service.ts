@@ -96,7 +96,6 @@ export class ProjectStateService {
   }
 
   removeTrack(trackId: string, parentId: string): void {
-    // const parentId = this.getItemByIdWithParentId(trackId)?.parentId;
     if (parentId) {
       this._project.update((project) => {
         const files = project.files.map((file) => {
