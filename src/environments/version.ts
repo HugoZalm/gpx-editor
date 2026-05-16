@@ -1,5 +1,5 @@
 
 export const versionInfo = {
-  version: '0.0.0',
-  buildTime: '2026-04-30T16:34:11.834Z'
+  version: '0.1.1',
+  buildTime: '2026-05-16T08:48:53.391Z'
 };
