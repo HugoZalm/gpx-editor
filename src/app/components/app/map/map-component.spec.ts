@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MapComponent } from './map-component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('MapComponent', () => {
   let component: MapComponent;
@@ -8,7 +8,7 @@ describe('MapComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapComponent]
+      imports: [MapComponent, TranslateModule]
     })
     .compileComponents();
 

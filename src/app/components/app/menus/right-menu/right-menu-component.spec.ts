@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RightMenuComponent } from './right-menu-component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('RightMenuComponent', () => {
   let component: RightMenuComponent;
@@ -8,7 +8,7 @@ describe('RightMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RightMenuComponent],
+      imports: [RightMenuComponent, TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RightMenuComponent);

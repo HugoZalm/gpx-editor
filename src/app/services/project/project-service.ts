@@ -1,3 +1,4 @@
+import { FileDownloadService } from './../download-service';
 import { inject, Injectable, Signal, signal } from '@angular/core';
 import { HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxRoute, HzxTrack, HzxWaypoint, ItemInfo } from './model/hzxProject';
 import { ProjectStateService } from './state/project-state-service';
@@ -13,6 +14,7 @@ export class ProjectService {
   private projectStateService = inject(ProjectStateService);
   private gpxUtilsService = inject(GpxUtilsService);
   private utilsService = inject(UtilsService);
+  private fileDownloadService = inject(FileDownloadService);
 
   /* PROJECT LEVEL */
   public readonly project = this.projectStateService.project;
@@ -29,15 +31,7 @@ export class ProjectService {
   public saveProject() {
     const filename = 'export.hzx';
     const project = this.projectStateService.project();
-    const json = JSON.stringify(project, null, 2);
-    console.log('SAVED DATA', json);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    a.click();
-    URL.revokeObjectURL(url);
+    this.fileDownloadService.downloadJson(project, filename);
   }
 
   /* FILE LEVEL */
@@ -208,23 +202,28 @@ export class ProjectService {
 
   getItemByIdWithParentId(id: string): ItemInfo | undefined {
     const project = this.projectStateService.project();
+    let parentId = undefined;
+    if (project.metadata.id === id) {
+      return { type: 'project', id, parentId, item: project };
+    }
     for (let fIndex = 0; fIndex < project.files.length; fIndex++) {
       const file = project.files[fIndex];
-      const parentId = file.metadata.id;
+      parentId = project.metadata.id;
       if (file.metadata.id === id) {
-        return { type: 'gpx', id, parentId: undefined, item: file };
+        return { type: 'gpx', id, parentId, item: file };
       }
+      parentId = file.metadata.id;
       const tIndex = file.tracks.findIndex(t => t.metadata.id === id);
       if (tIndex !== -1) {
-        return { type: 'track', id: id, parentId, item: file.tracks[tIndex] };
+        return { type: 'track', id, parentId, item: file.tracks[tIndex] };
       }
       const rIndex = file.routes.findIndex(r => r.metadata.id === id);
       if (rIndex !== -1) {
-        return { type: 'route', id: id, parentId, item: file.routes[rIndex] };
+        return { type: 'route', id, parentId, item: file.routes[rIndex] };
       }
       const wIndex = file.waypoints.findIndex(w => w.metadata.id === id);
       if (wIndex !== -1) {
-        return { type: 'waypoint', id: id, parentId, item: file.waypoints[wIndex] };
+        return { type: 'waypoint', id, parentId, item: file.waypoints[wIndex] };
       }
     }
     return undefined;

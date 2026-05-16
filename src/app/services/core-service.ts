@@ -171,43 +171,47 @@ export class CoreService {
 
   private onSelect(event: SelectEvent) {
     const feature = event.selected[0];
+    console.log('CLICKED on feature', feature);
     if (!feature) {
       this.mapStateService.clearSelection();
       return;
     }
-    console.log('CLICKED on feature', feature);
     if (this.mapStateService.interactionState() === InteractionStates.SPLITTER) {
       const clickCoord = event.mapBrowserEvent.coordinate;
-      const closest = this.getClosestPointOnLine(feature, clickCoord);
-      console.log('Closest point on line:', closest);
-      const id = feature.get('layerid');
-      const track = this.projectService.getItemById(id);
-      if (track) {
-        const best = this.gpxUtilsService.findClosestTrackPointIndex((track as HzxTrack).track, closest);
-        console.log('BEST', best);
-        // TODO: show splitpoint on map
-        const dialogRef = this.dialog.open(MessageDialog, { data: { 
-          message: 'dialog.continuesplitonpoint',
-          actions: [
-            { label: 'dialog.splitonpoint', value: 'split' },
-            { label: 'dialog.splitonpointandremoveoldtrack', value: 'remove-oldtrack' }
-          ]
-        } });
-        dialogRef.afterClosed().subscribe((result) => {
-          if (result !== undefined) {
-            const newTracks = this.gpxUtilsService.splitTrackAtPointIndex((track as HzxTrack), best.index);
-            console.log('NEW TRACKS', newTracks);
-            const parentId = this.projectService.getItemByIdWithParentId(id)?.parentId;
-            if (parentId) {
-              this.addTrackToFile(newTracks[0], parentId, '[1]: ');
-              this.addTrackToFile(newTracks[1], parentId, '[2]: ');
-              if (result === 'remove-oldtrack') {
-                this.removeTrackFromFile(parentId);
-              }
+      this.splitFeature(feature, clickCoord);
+    }
+  }
+
+  private splitFeature(feature: Feature, coord: Coordinate) {
+    const closest = this.getClosestPointOnLine(feature, coord);
+    console.log('Closest point on line:', closest);
+    const id = feature.get('layerid');
+    const track = this.projectService.getItemById(id);
+    if (track) {
+      const best = this.gpxUtilsService.findClosestTrackPointIndex((track as HzxTrack).track, closest);
+      console.log('BEST', best);
+      // TODO: show splitpoint on map
+      const dialogRef = this.dialog.open(MessageDialog, { data: { 
+        message: 'dialog.continuesplitonpoint',
+        actions: [
+          { label: 'dialog.splitonpoint', value: 'split' },
+          { label: 'dialog.splitonpointandremoveoldtrack', value: 'remove-oldtrack' }
+        ]
+      } });
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result !== undefined) {
+          const newTracks = this.gpxUtilsService.splitTrackAtPointIndex((track as HzxTrack), best.index);
+          console.log('NEW TRACKS', newTracks);
+          const parentId = this.projectService.getItemByIdWithParentId(id)?.parentId;
+          if (parentId) {
+            this.addTrackToFile(newTracks[0], parentId, '[1]: ');
+            this.addTrackToFile(newTracks[1], parentId, '[2]: ');
+            if (result === 'remove-oldtrack') {
+              this.removeTrackFromFile(id);
             }
           }
-        });
-      }
+        }
+      });
     }
   }
 
