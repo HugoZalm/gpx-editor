@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { RightPanelComponent } from './right-panel-component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('RightPanelComponent', () => {
   let component: RightPanelComponent;
@@ -8,7 +8,7 @@ describe('RightPanelComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RightPanelComponent],
+      imports: [RightPanelComponent, TranslateModule.forRoot(),],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RightPanelComponent);

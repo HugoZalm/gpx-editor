@@ -38,6 +38,14 @@
 <mat-menu #projectMenu="matMenu">
   <div class="sub-menu">
     <app-menu-button
+      [label]="'menu.testproject'"
+      [icon]="'test'"
+      [action]="'open-test'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.testproject.tooltip'"
+    ></app-menu-button>
+    <hr />
+    <app-menu-button
       [label]="'menu.editproject'"
       [icon]="'pencil'"
       [action]="'edit-project'"
@@ -88,6 +96,15 @@
       (onAction)="handleAction($event)"
       [tooltip]="'menu.openfile.tooltip'"
     ></app-menu-button>
+    @if (projectStateService.selectedItemId()) {
+      <app-menu-button
+        [label]="'menu.clearselection'"
+        [icon]="'clear-selection'"
+        [action]="'clear-selection'"
+        (onAction)="handleAction($event)"
+        [tooltip]="'menu.clearselection.tooltip'"
+      ></app-menu-button>
+    }
   </div>
 </mat-menu>
 
@@ -162,6 +179,20 @@
       [action]="'goto-track'"
       (onAction)="handleAction($event)"
       [tooltip]="'menu.gototrack.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.showinfo'"
+      [icon]="'info'"
+      [action]="'show-info'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.showinfo.tooltip'"
+    ></app-menu-button>
+    <app-menu-button
+      [label]="'menu.showgpx'"
+      [icon]="'gpx'"
+      [action]="'show-gpx'"
+      (onAction)="handleAction($event)"
+      [tooltip]="'menu.showgpx.tooltip'"
     ></app-menu-button>
     <hr />
     <app-menu-button

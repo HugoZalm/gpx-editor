@@ -1,3 +1,5 @@
+import { HzxGpx } from './../../../services/project/model/hzxProject';
+import { ProjectService } from './../../../services/project/project-service';
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +16,10 @@ import { CoreService } from '../../../services/core-service';
 import { ProjectStateService } from '../../../services/project/state/project-state-service';
 import { WipDialog } from '../dialogs/work-in-progress/wip-dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SelectDialog } from '../dialogs/select/select-dialog';
+import project from './project.json';
+import { GpxDialog } from '../dialogs/gpx/gpx-dialog';
+import { InfoDialog } from '../dialogs/info/info-dialog';
 
 
 @Component({
@@ -37,8 +43,14 @@ export class ProjectComponent {
   public projectStateService = inject(ProjectStateService);
   public uiStateService = inject(UiStateService);
 
-
   private clickedItem: HzxItem | undefined = undefined;
+
+  ngOnInit() {}
+
+  openTestProject() {
+    const string = JSON.stringify(project);
+    this.coreService.replaceProject(string);
+  }
 
   selectTrack(event: Event, item: HzxTrack): void {
     event.stopPropagation();
@@ -55,10 +67,19 @@ export class ProjectComponent {
   }
 
   handleAction(action: string) {
-    let fileId;
+    let id;
     switch (action) {
+      case 'open-test':
+        this.openTestProject();
+        break;
       case 'toggle-panel':
         this.uiStateService.togglePanel(PanelTypes.RIGHT);
+        break;
+      case 'show-info':
+        this.openInfoDialog();
+        break;
+      case 'show-gpx':
+        this.openGpxDialog();
         break;
       case 'edit-project':
         this.openMetadataDialog();
@@ -97,15 +118,15 @@ export class ProjectComponent {
         this.openWipDialog();
         break;
       case 'delete-file':
-        fileId = this.clickedItem?.metadata.id;
-        if (fileId) {
-          this.coreService.removeFileFromProject(fileId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.removeFileFromProject(id);
         }
         break;
       case 'new-track':
-        fileId = this.clickedItem?.metadata.id;
-        if (fileId) {
-          this.coreService.addNewTrackToFile(fileId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.addNewTrackToFile(id);
         }
         break;
       case 'edit-track':
@@ -114,14 +135,23 @@ export class ProjectComponent {
       case 'goto-track':
         this.goto();
         break;
+      case 'copy-track':
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.openCopyToDialog();
+        }
+        break;
       case 'delete-track':
-        const trackId = this.clickedItem?.metadata.id;
-        if (trackId) {
-          this.coreService.removeTrackFromFile(trackId);
+        id = this.clickedItem?.metadata.id;
+        if (id) {
+          this.coreService.removeTrackFromFile(id);
         }
         break;
       case 'cut-track':
         this.openWipDialog();
+        break;
+      case 'clear-selection':
+        this.coreService.clearSelection();
         break;
     }
     this.clickedItem = undefined;
@@ -135,6 +165,22 @@ export class ProjectComponent {
     const item = this.clickedItem;
     if(item) {
       this.coreService.gotoSelectedItem(item);
+    }
+  }
+
+  private openInfoDialog() {
+    const item = this.clickedItem;
+    if (item) {
+      const dialogRef = this.dialog.open(InfoDialog, { data: item });
+    }
+  }
+
+  private openGpxDialog() {
+    const item = this.clickedItem;
+    if (item) {
+      if(this.coreService.isType('track', item)) {
+        const dialogRef = this.dialog.open(GpxDialog, { data: { item, type: 'track' }});
+      }
     }
   }
 
@@ -161,6 +207,25 @@ export class ProjectComponent {
         if (result !== undefined) {
           console.log(result);
           this.coreService.editMetadata(result);
+        }
+      });
+    }
+  }
+
+  private openCopyToDialog() {
+    const item = this.clickedItem;
+    if (item && this.coreService.isType('track', item)) {
+      const title = 'dialog.selectFile';
+      let list: { label: string, value: string }[] = [];
+      list = this.projectStateService.project().files.map( (file: HzxGpx) => {
+        return { label: file.metadata.name, value: file.metadata.id }
+      });
+      const dialogRef = this.dialog.open(SelectDialog, { data: {title, list }});
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result !== undefined) {
+          console.log('SELECTED', result);
+          const fileId = result;
+          this.coreService.addTrackToFile(item as HzxTrack, fileId, 'COPY: ');
         }
       });
     }

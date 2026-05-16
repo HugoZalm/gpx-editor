@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { ParsedGPX, Track, Waypoint } from '@we-gold/gpxjs';
+import { MetaData, ParsedGPX, Track, Waypoint } from '@we-gold/gpxjs';
 import Feature from 'ol/Feature';
 
 export interface HzxProject {
@@ -9,6 +9,7 @@ export interface HzxProject {
 
 export interface HzxGpx {
   metadata: HzxMetaData;
+  meta: MetaData;
   raw: ParsedGPX;
   tracks: HzxTrack[];
   routes: HzxRoute[];

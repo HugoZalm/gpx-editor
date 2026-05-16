@@ -1,5 +1,5 @@
 import { Component, computed, inject, input, output } from '@angular/core';
-import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideLocate, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
+import { LucideBike, LucideBook, LucideBookmark, LucideChartArea, LucideCodeXml, LucideCombine, LucideCopy, LucideDownload, LucideFile, LucideFileDown, LucideFileOutput, LucideFilePen, LucideFilePlus, LucideFiles, LucideFileUp, LucideFileX, LucideFolder, LucideFolderDown, LucideFolderOpen, LucideFolderOutput, LucideFolderPen, LucideFolderPlus, LucideFolderTree, LucideFolderUp, LucideInfo, LucideLocate, LucideMapPin, LucidePanelBottomClose, LucidePanelBottomOpen, LucidePanelRightClose, LucidePanelRightOpen, LucidePencil, LucidePlus, LucideScissors, LucideSettings, LucideSquareDashedMousePointer, LucideSquareMousePointer, LucideTestTube, LucideTrash, LucideUpload, LucideX } from '@lucide/angular';
 import { LucideDynamicIcon } from '@lucide/angular';
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -118,6 +118,14 @@ export class IconButtonComponent {
       case 'goto':
       case 'locate':
         return LucideLocate;
+      case 'gpx':
+      case 'xml':
+        return LucideCodeXml;
+      case 'info':
+        return LucideInfo;
+      case 'test':
+      case 'test-tube':
+        return LucideTestTube;
       case 'bike':
       default:
         return LucideBike;

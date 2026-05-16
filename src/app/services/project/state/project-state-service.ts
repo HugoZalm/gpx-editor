@@ -1,5 +1,5 @@
 import { GpxUtilsService } from './../../gpx/utils/gpx-utils-service';
-import { Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import {
   HzxMetaData,
   HzxGpx,
@@ -10,12 +10,19 @@ import {
   HzxItem,
   ItemInfo
 } from '../model/hzxProject';
+import { UtilsService } from '../../utils-service';
 
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectStateService {
+  private utils = inject(UtilsService);
+
+  public ERROR = {
+    FileDoesNotExist: 'file does not exist'
+  }
+  
   private _project = signal<HzxProject>({ metadata: { id: '', name: '', color: '' }, files: [] });
   public readonly project = this._project.asReadonly();
   private _selectedItemId = signal<string | undefined>(undefined);
@@ -26,7 +33,7 @@ export class ProjectStateService {
       metadata: {
         id: crypto.randomUUID(),
         name: 'new project',
-        color: '',
+        color: this.utils.getRandomColor(),
       },
       files: []
     });
@@ -57,7 +64,7 @@ export class ProjectStateService {
       const files = project.files;
       const newFiles = files.filter((f) => f.metadata.id !== id);
       if (newFiles.length === files.length) {
-        console.log('file does not exist');
+        console.log(this.ERROR.FileDoesNotExist);
         return project; // no change
       }
       const removed = files.find((f) => f.metadata.id === id);
@@ -96,7 +103,6 @@ export class ProjectStateService {
   }
 
   removeTrack(trackId: string, parentId: string): void {
-    // const parentId = this.getItemByIdWithParentId(trackId)?.parentId;
     if (parentId) {
       this._project.update((project) => {
         const files = project.files.map((file) => {
@@ -133,21 +139,99 @@ export class ProjectStateService {
   }
 
   /* ROUTE LEVEL */
-  addRoute(fileId: string, route: HzxRoute): string {
-    return '';
+  addRoute(fileId: string, route: HzxRoute): void {
+    this._project.update((project) => {
+      const files = project.files.map((file) => {
+        if (file.metadata.id === fileId) {
+          file.routes.push(route);
+        }
+        return file;
+      });
+      return { ...project, files };
+    });
   }
 
-  removeRoute(id: string): void {}
+  removeRoute(routeId: string, parentId: string): void {
+    if (parentId) {
+      this._project.update((project) => {
+        const files = project.files.map((file) => {
+          if (file.metadata.id === parentId) {
+            const idx = file.routes.findIndex(t => t.metadata.id === routeId);
+            if (idx > -1) {
+              file.routes.splice(idx, 1);
+            }
+          }
+          return file;
+        });
+        return { ...project, files };
+      });
+    }
+  }
 
-  updateRoute(route: HzxRoute): void {}
+  updateRoute(route: HzxRoute, parentId: string): void {
+    const routeId = route.metadata.id;
+    if (parentId) {
+      this._project.update((project) => {
+        const files = project.files.map((file) => {
+          if (file.metadata.id === parentId) {
+            const idx = file.routes.findIndex(t => t.metadata.id === routeId);
+            if (idx > -1) {
+              file.routes.splice(idx, 1, route);
+            }
+          }
+          return file;
+        });
+        return { ...project, files };
+      });
+    }
+  }
 
   /* WAYPOINT LEVEL */
-  addWaypoint(trackId: string, track: HzxWaypoint): string {
-    return '';
+  addWaypoint(fileId: string, waypoint: HzxWaypoint): void {
+    this._project.update((project) => {
+      const files = project.files.map((file) => {
+        if (file.metadata.id === fileId) {
+          file.waypoints.push(waypoint);
+        }
+        return file;
+      });
+      return { ...project, files };
+    });
   }
 
-  removeWaypoint(id: string): void {}
+  removeWaypoint(waypointId: string, parentId: string): void {
+    if (parentId) {
+      this._project.update((project) => {
+        const files = project.files.map((file) => {
+          if (file.metadata.id === parentId) {
+            const idx = file.waypoints.findIndex(t => t.metadata.id === waypointId);
+            if (idx > -1) {
+              file.waypoints.splice(idx, 1);
+            }
+          }
+          return file;
+        });
+        return { ...project, files };
+      });
+    }
+  }
 
-  updateWaypoint(waypoint: HzxWaypoint): void {}
+  updateWaypoint(waypoint: HzxWaypoint, parentId: string): void {
+    const waypointId = waypoint.metadata.id;
+    if (parentId) {
+      this._project.update((project) => {
+        const files = project.files.map((file) => {
+          if (file.metadata.id === parentId) {
+            const idx = file.waypoints.findIndex(t => t.metadata.id === waypointId);
+            if (idx > -1) {
+              file.waypoints.splice(idx, 1, waypoint);
+            }
+          }
+          return file;
+        });
+        return { ...project, files };
+      });
+    }
+  }
 
 }

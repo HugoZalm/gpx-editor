@@ -4,8 +4,7 @@ import { provideTranslateService} from "@ngx-translate/core";
 import { provideTranslateHttpLoader } from "@ngx-translate/http-loader";
 import { provideHttpClient } from "@angular/common/http";
 import { routes } from './app.routes';
-import { DBConfig, provideIndexedDb } from 'ngx-indexed-db';
-
+import { provideHighlightOptions } from 'ngx-highlightjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +18,10 @@ export const appConfig: ApplicationConfig = {
       }),
       fallbackLang: 'en',
       lang: 'nl'
-    })
+    }),
+    provideHighlightOptions({
+      fullLibraryLoader: () => import('highlight.js'),
+    }),
   ]
 };
 

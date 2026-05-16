@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { IconButtonComponent } from './icon-button-component';
+import { IconButtonComponent } from '../icon-button/icon-button-component';
+import { TranslateModule } from '@ngx-translate/core';
 
 describe('IconButtonComponent', () => {
   let component: IconButtonComponent;
@@ -8,7 +8,7 @@ describe('IconButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IconButtonComponent],
+      imports: [IconButtonComponent, TranslateModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IconButtonComponent);

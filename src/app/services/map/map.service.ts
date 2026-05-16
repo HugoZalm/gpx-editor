@@ -1,16 +1,16 @@
 import { VectorLayerService } from './layers/vector-layer-service';
-import { SplitInteractionService } from './interactions/split-interaction-service';
 import { SelectInteractionService } from './interactions/select-interaction-service';
 import { BaseLayerService } from './layers/base-layer-service';
-import { inject, Injectable } from "@angular/core";
+import { effect, inject, Injectable } from "@angular/core";
 import olMap from "ol/Map";
 import View from "ol/View";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import { createEmpty, extend } from 'ol/extent';
 import { MapStateService } from "./state/map-state-service";
-import { defaults as defaultInteractions } from 'ol/interaction';
-import { HzxFeature } from "../project/model/hzxProject";
+import { defaults as defaultInteractions, Select } from 'ol/interaction';
+import { HzxFeature, HzxMetaData } from "../project/model/hzxProject";
+import { InteractionStates } from './model/interaction-states.enum';
 
 
 @Injectable({
@@ -22,12 +22,12 @@ export class MapService {
   private baseLayerService = inject(BaseLayerService);
   private vectorLayerService = inject(VectorLayerService);
   private selectInteractionService = inject(SelectInteractionService);
-  private splitInteractionService = inject(SplitInteractionService);
 
   constructor() {
     this.createMap();
     this.baseLayerService.createOsmLayer();
     // this.baseLayerService.createOpenTopoLayer();
+
   }
 
   /* MAP */
@@ -43,6 +43,17 @@ export class MapService {
       }),
     });
     this.mapState.setMap(map);
+    this.selectInteractionService.addSelection();
+
+    effect(() => {
+      const selectedFeatures = this.mapState.selectedFeatures();
+      console.log('Selection changed:', selectedFeatures);
+      if (this.mapState.interactionState() === InteractionStates.SPLITTER) {
+        if (selectedFeatures[0]) {
+          const id: string = selectedFeatures[0].get('id') as string;
+        }
+      }
+    });
   }
 
   /** Attach the map to a DOM element */
@@ -101,9 +112,9 @@ export class MapService {
     return this.vectorLayerService.createVectorLayer(feature);
   }
 
-  updateVectorLayer(feature: HzxFeature, selected?: boolean): string {
-    return this.vectorLayerService.updateVectorLayer(feature, selected);
-  }
+  // updateVectorLayer(feature: HzxFeature, selected?: boolean): string {
+  //   return this.vectorLayerService.updateVectorLayer(feature, selected);
+  // }
 
   removeAllVectorLayers() {
     this.vectorLayerService.removeAllVectorLayers();
@@ -121,20 +132,38 @@ export class MapService {
     this.vectorLayerService.toggleVectorLayerSelection(id);
   }
 
-  /* INTERACTIONS */
-  setSelection(active: boolean) {
-    if (active === true) {
-      this.selectInteractionService.addSelection();
-    } else {
-      this.selectInteractionService.removeSelection();
+  EditVectorLayerMetadata(metadata: HzxMetaData) {
+    const layer = this.getVectorLayer(metadata.id);
+    if (layer) {
+      layer.set('id', metadata.id);
+      layer.set('name', metadata.name);
+      layer.set('color', metadata.color);
+      layer.changed();
     }
   }
 
-  setSplitter(id?: string) {
-    if (id) {
-      this.splitInteractionService.addSplitter(id);
+  /* INTERACTIONS */
+
+  setInteractionState(state: InteractionStates): void {
+    this.mapState.setInteractionState(state);
+    if (this.mapState.interactionState() === InteractionStates.SPLITTER ||
+        this.mapState.interactionState() === InteractionStates.COMBINER
+    ) {
+      this.setSelection(true);
     } else {
-      this.splitInteractionService.removeSplitter();
+      this.setSelection(false);
+    }
+  }
+  
+  setSelection(active: boolean) {
+    if (active === true) {
+      this.mapState.getSelect().getFeatures().clear();
+      this.mapState.clearSelection();
+      this.mapState.getSelect().setActive(true);
+    } else {
+      this.mapState.getSelect().setActive(false);
+      this.mapState.getSelect().getFeatures().clear();
+      this.mapState.clearSelection();
     }
   }
 

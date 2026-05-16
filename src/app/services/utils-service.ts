@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import Feature from 'ol/Feature';
+import { HzxFeature } from './project/model/hzxProject';
 
 @Injectable({
   providedIn: 'root',
