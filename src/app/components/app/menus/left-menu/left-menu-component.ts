@@ -29,7 +29,9 @@ export class LeftMenuComponent {
         break;
       case 'combine':
         this.coreService.setInteractionState(InteractionStates.COMBINER);
-        // this.mapService.setSelection(true);
+        break;
+      case 'combine-next':
+        this.coreService.combineFeatures();
         break;
       case 'cut':
         this.coreService.setInteractionState(InteractionStates.SPLITTER);

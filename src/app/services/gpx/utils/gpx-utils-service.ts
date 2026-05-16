@@ -90,7 +90,84 @@ export class GpxUtilsService {
     return [firstTrack, secondTrack];
   }
 
-  getFirstPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
+  combine2Tracks(track1: HzxTrack, track2: HzxTrack): HzxTrack {
+    const newId = crypto.randomUUID();
+    // TODO: calculate correct values
+    const newTrack: Track = {
+      name: newId,
+      comment: 'combination of 2 tracks with ID: ' + track1.metadata.id + ' and ' +  track2.metadata.id,
+      description: null,
+      src: null,
+      number: null,
+      link: null,
+      type: null,
+      points: [ ...track1.track.points, ...track2.track.points],
+      distance: {
+        total: track1.track.distance.cumulative[track1.track.distance.cumulative.length -1] + track2.track.distance.cumulative[track2.track.distance.cumulative.length -1],
+        cumulative: [ ...track1.track.distance.cumulative, ...track1.track.distance.cumulative ],
+      },
+      duration: {
+        cumulative: [ ...track1.track.duration.cumulative, ...track1.track.duration.cumulative ],
+        movingDuration: 0,
+        totalDuration: track1.track.duration.cumulative[track1.track.duration.cumulative.length -1] + track2.track.duration.cumulative[track2.track.duration.cumulative.length -1],        startTime: null,
+        endTime: null, // TODO: new Date(track.track.duration.startTime?.getTime() + track.track.duration.cumulative[index + 1])
+      },
+      elevation: {
+        maximum: null, // TODO Math.max(track.track.slopes.slice(0, index + 1)),
+        minimum: null,
+        positive: null,
+        negative: null,
+        average: null
+      },
+      slopes: [ ...track1.track.slopes, ...track2.track.slopes ]
+    }
+    const track = {
+      metadata: { id: newId, name: newId, color: '' },
+      track: newTrack
+    };
+    return track;
+  }
+
+  combineTracks(tracks: HzxTrack[]): HzxTrack {
+    const newId = crypto.randomUUID();
+    // TODO: calculate correct values
+    const newTrack: Track = {
+      name: newId,
+      comment: 'combination of tracks with ID: ' + tracks.map((t) => t.metadata.id).join(','),
+      description: null,
+      src: null,
+      number: null,
+      link: null,
+      type: null,
+      points: tracks.flatMap(t => t.track.points),
+      distance: {
+        total: this.sumOfLastValues(tracks, ['track','distance','cumulative']),
+        cumulative: tracks.flatMap(t => t.track.distance.cumulative),
+      },
+      duration: {
+        cumulative: tracks.flatMap(t => t.track.duration.cumulative),
+        movingDuration: 0,
+        totalDuration: this.sumOfLastValues(tracks, ['track','duration','cumulative']),
+        startTime: null,
+        endTime: null,
+      },
+      elevation: {
+        maximum: null,
+        minimum: null,
+        positive: null,
+        negative: null,
+        average: null
+      },
+      slopes: tracks.flatMap(t => t.track.slopes)
+    }
+    const track = {
+      metadata: { id: newId, name: newId, color: '' },
+      track: newTrack
+    };
+    return track;
+  }
+
+  private getFirstPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
     const newId = crypto.randomUUID();
     const newTrack: Track = {
       name: newId,
@@ -128,7 +205,7 @@ export class GpxUtilsService {
     return firstTrack;
   }
 
-  getSecondPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
+  private getSecondPartOfTrackAtPointIndex(track: HzxTrack, index: number): HzxTrack {
     const newId = crypto.randomUUID();
     const newTrack: Track = {
       name: newId,
@@ -166,9 +243,25 @@ export class GpxUtilsService {
     return secondTrack;
   }
 
-  distance(a: Coordinate, b: Coordinate): number {
+  private distance(a: Coordinate, b: Coordinate): number {
     const dx = a[0] - b[0];
     const dy = a[1] - b[1];
     return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  private combine(a: any[], b: any): any {
+    return [ ...a, ...b ];
+  }
+
+  private sumOfLastValues(arr: any[], path: string[]): number {
+    return arr.reduce((total, obj) => {
+      // Resolve nested property from path
+      const value = path.reduce((current, key) => current?.[key], obj);
+      // Skip if not an array or empty
+      if (!Array.isArray(value) || value.length === 0) {
+        return total;
+      }
+      return total + value[value.length - 1];
+    }, 0);
   }
 }

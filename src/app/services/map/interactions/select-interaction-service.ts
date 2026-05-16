@@ -1,12 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import Select, { SelectEvent } from 'ol/interaction/Select';
+import Select from 'ol/interaction/Select';
 import { MapStateService } from '../state/map-state-service';
-import MapBrowserEvent from 'ol/MapBrowserEvent';
-import { InteractionStates } from '../model/interaction-states.enum';
-import Feature from 'ol/Feature';
-import LineString from 'ol/geom/LineString';
-import Geometry from 'ol/geom/Geometry';
-import { Coordinate } from 'ol/coordinate';
+import {always} from 'ol/events/condition.js';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +13,10 @@ export class SelectInteractionService {
   private select!: Select;
 
   public addSelection() {
-    const select = new Select();
+    const select = new Select({
+        toggleCondition: always,
+        multi: true,
+    });
     this.mapState.getMap().addInteraction(select);
     this.mapState.setSelect(select);
     this.mapState.getSelect().setActive(false);

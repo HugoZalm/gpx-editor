@@ -146,7 +146,9 @@ export class MapService {
 
   setInteractionState(state: InteractionStates): void {
     this.mapState.setInteractionState(state);
-    if (this.mapState.interactionState() === InteractionStates.SPLITTER) {
+    if (this.mapState.interactionState() === InteractionStates.SPLITTER ||
+        this.mapState.interactionState() === InteractionStates.COMBINER
+    ) {
       this.setSelection(true);
     } else {
       this.setSelection(false);
@@ -155,6 +157,8 @@ export class MapService {
   
   setSelection(active: boolean) {
     if (active === true) {
+      this.mapState.getSelect().getFeatures().clear();
+      this.mapState.clearSelection();
       this.mapState.getSelect().setActive(true);
     } else {
       this.mapState.getSelect().setActive(false);

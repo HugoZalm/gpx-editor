@@ -1,7 +1,7 @@
 import { MapStateService } from './map/state/map-state-service';
 import { inject, Injectable } from '@angular/core';
 import { ProjectService } from './project/project-service';
-import { HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxTrack } from './project/model/hzxProject';
+import { HzxFeature, HzxGpx, HzxItem, HzxMetaData, HzxProject, HzxTrack } from './project/model/hzxProject';
 import { UtilsService } from './utils-service';
 import { GpxUtilsService } from './gpx/utils/gpx-utils-service';
 import { MapService } from './map/map.service';
@@ -13,6 +13,8 @@ import Feature from 'ol/Feature';
 import { Coordinate } from 'ol/coordinate';
 import { MatDialog } from '@angular/material/dialog';
 import { MessageDialog } from '../components/app/dialogs/message/message-dialog';
+import { SelectDialog } from '../components/app/dialogs/select/select-dialog';
+import { ProjectStateService } from './project/state/project-state-service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +23,7 @@ export class CoreService {
   readonly dialog = inject(MatDialog);
 
   private projectService = inject(ProjectService);
+  private projectStateService = inject(ProjectStateService);
   private mapService = inject(MapService);
   private mapStateService = inject(MapStateService);
   private gpxParseService = inject(GpxParseService);
@@ -173,13 +176,59 @@ export class CoreService {
     const feature = event.selected[0];
     console.log('CLICKED on feature', feature);
     if (!feature) {
-      this.mapStateService.clearSelection();
       return;
     }
     if (this.mapStateService.interactionState() === InteractionStates.SPLITTER) {
+      this.mapStateService.addSelectedFeature(feature);
       const clickCoord = event.mapBrowserEvent.coordinate;
       this.splitFeature(feature, clickCoord);
     }
+    if (this.mapStateService.interactionState() === InteractionStates.COMBINER) {
+      this.mapStateService.addSelectedFeature(feature);
+    }
+  }
+
+  public combineFeatures() {
+    const features = this.mapStateService.selectedFeatures();
+    const tracks: HzxTrack[] = [];
+    features.forEach((f) => {
+      const id = f.get('layerid');
+      const track = this.projectService.getItemById(id);
+      // TODO: VANAF HIER OOK SELECT IN PROJECT ?
+      if (track && this.isType('track', track)) {
+        tracks.push(track as HzxTrack);
+      }
+    });
+    // TODO: VANAF HIER OOK SELECT IN PROJECT ?
+    const dialogRef = this.dialog.open(MessageDialog, { data: { 
+      message: 'dialog.continuecombine',
+      actions: [
+        { label: 'dialog.combine', value: 'combine' },
+        { label: 'dialog.combineandremoveoldtracks', value: 'remove-oldtrack' }
+      ]
+    } });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result !== undefined) {
+        const newTrack = this.gpxUtilsService.combineTracks(tracks);
+        console.log('NEW TRACK', newTrack);
+        const title = 'dialog.selectFile';
+        let list: { label: string, value: string }[] = [];
+        list = this.projectStateService.project().files.map( (file: HzxGpx) => {
+          return { label: file.metadata.name, value: file.metadata.id }
+        });
+        const dialogRef2 = this.dialog.open(SelectDialog, { data: {title, list }});
+        dialogRef2.afterClosed().subscribe((result) => {
+          if (result !== undefined) {
+            console.log('SELECTED', result);
+            const fileId = result;
+            this.addTrackToFile(newTrack, fileId);
+            if (result === 'remove-oldtrack') {
+              // this.removeTrackFromFile(id);
+            }
+          }
+        });
+      }
+    });
   }
 
   private splitFeature(feature: Feature, coord: Coordinate) {
@@ -187,6 +236,7 @@ export class CoreService {
     console.log('Closest point on line:', closest);
     const id = feature.get('layerid');
     const track = this.projectService.getItemById(id);
+    // TODO: VANAF HIER OOK SELECT IN PROJECT ?
     if (track) {
       const best = this.gpxUtilsService.findClosestTrackPointIndex((track as HzxTrack).track, closest);
       console.log('BEST', best);
@@ -213,6 +263,11 @@ export class CoreService {
         }
       });
     }
+  }
+
+  private addMoreFeatures() {
+    // TODO: slect more features and add to collection
+    // on rightclick (or left-menu-button ?) return
   }
 
   private getClosestPointOnLine(feature: Feature<Geometry>, coordinate: Coordinate): Coordinate {
