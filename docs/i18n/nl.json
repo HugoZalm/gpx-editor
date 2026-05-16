@@ -18,6 +18,8 @@
         "openfile.tooltip": "Voeg een bestaande file toe aan het project",
         "editfile": "Bewerk Bestand",
         "editfile.tooltip": "Bewerk het bestand",
+        "gotofile": "Goto File",
+        "gotofile.tooltip": "Toon de file op de kaart",
         "savefile": "Bewaar Bestand",
         "savefile.tooltip": "Bewaar het bestand",
         "exportfile": "Export Bestand",
@@ -34,6 +36,8 @@
         "opentrack.tooltip": "Voeg een bestaande track toe aan het bestand",
         "edittrack": "Bewerk Track",
         "edittrack.tooltip": "Bewerk de track",
+        "gototrack": "Goto Track",
+        "gototrack.tooltip": "Toon de track op de kaart",
         "savetrack": "Bewaar Track",
         "savetrack.tooltip": "Bewaar de track",
         "exporttrack": "Export Track",
@@ -44,6 +48,10 @@
         "copytrack.tooltip": "Kopieer de track naar een ander bestand",
         "duplicatetrack": "Dupliceer Track",
         "duplicatetrack.tooltip": "Dupliceer de track in dit bestand",
+        "showinfo": "Toon info",
+        "showinfo.tooltip": "Toon de detail informatie van dit item",
+        "showgpx": "Toon GPX",
+        "showgpx.tooltip": "Toon de onbewerkte gpx-file",
         "manage": "Bewerk",
         "display": "Weergave",
         "tree": "Bestandsboom",
@@ -65,7 +73,9 @@
         "close": "sluiten",
         "save": "bewaar",
         "cancel": "terug",
-        "link": "link"
+        "link": "link",
+        "import": "",
+        "importinfo": ""
     },
     "errors": {
         "Failed to load": "'Fout bij het laden van'",
@@ -102,12 +112,24 @@
         "importinfo": "laad een geojson met alle kaartinfo.",
         "export": "exporteer kaart"
     },
+    "metadata": {
+        "edit": "",
+        "name": "naam",
+        "color": "kleur"
+    },
     "track": {
         "name": "naam",
         "description": "beschrijving",
         "geom": "geometrie",
         "create": "maak track",
         "manage": "beheer track"
+    },
+    "waypoint": {
+        "name": "naam",
+        "description": "beschrijving",
+        "geom": "geometrie",
+        "create": "maak punt",
+        "manage": "beheer punt"
     },
     "poi": {
         "name": "naam",
